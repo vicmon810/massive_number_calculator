@@ -7,5 +7,4 @@ Integer.h
 Integer.cpp
 Rational.h
 Rational.cpp
-
 )
