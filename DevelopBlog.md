@@ -1,5 +1,7 @@
 # Integer :
 
+## 23/May/23
+I was wrong, currently += operator can handel single digit +, as well as -= operator. 
 
 ## 20/May/23
 1. ~~operator+=~~

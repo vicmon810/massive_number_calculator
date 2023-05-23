@@ -14,8 +14,8 @@ using namespace cosc326;
 int main()
 {
 	cout << "Kia ora World" << std::endl;
-	Integer i = Integer("99");
-	Integer c = Integer("11");
+	Integer i = Integer("54");
+	Integer c = Integer("63");
 	// Integer d = Integer("4");
 	// Integer a = Integer("-54543434345");
 	// Integer b = Integer(i);

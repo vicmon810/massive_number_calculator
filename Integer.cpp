@@ -126,44 +126,48 @@ namespace cosc326
 
 			for (int i = max; i >= max - min; i--)
 			{
-				std::cout << value << " Test" << std::endl;
+				std::cout << value << " Test " << i << std::endl;
+
 				int carrier = 0;
 				char ch1 = value[i];
 				char ch2 = input[i - (max - min)];
 				int num1 = ch1 - '0';
 				int num2 = ch2 - '0';
-				carrier = num1 + num2 + carrier;
-
+				carrier = num1 + num2;
+				int test = max - min;
 				if (carrier < 10)
 				{
 					value[i] = '0' + carrier;
-					std::cout << "value: " << value << " i: " << i << std::endl;
+					std::cout << "HH: " << value << std::endl;
 				}
-				else if (carrier > 10 && i == 0)
+				else if (carrier >= 10 && test == 0)
 				{
-					std::cout << "here" << std::endl;
+					value[i] = '0' + (carrier % 10);
+					std::string newIndex = std::to_string(carrier);
+					char c = newIndex[0];
+					std::cout << c << " " << carrier << std::endl;
+					value.insert(value.begin(), c);
+					std::cout << "FD: " << value << std::endl;
 				}
 				else
 				{
 					value[i] = '0' + (carrier % 10);
 					carrier /= 10;
-
 					int j = i - 1;
+					std::cout << "MM: " << value << std::endl;
 					while (carrier > 0 && j >= 0)
 					{
 						carrier += value[j] - '0';
 						value[j] = '0' + (carrier % 10);
 						carrier /= 10;
-						std::cout << "value: " << value << " i: " << i << std::endl;
 						j--;
+						std::cout << "CC: " << value << std::endl;
 						if (j < 0 && carrier > 0)
 						{
 							std::string newIndex = std::to_string(carrier);
-							char c = '0' + carrier;
-							std::cout << c << std::endl;
+							char c = newIndex[0];
 							value.insert(value.begin(), c);
-							value = value.substr(0);
-							std::cout << "value: " << value << " i: " << i << " j: " << j << std::endl;
+							std::cout << "DD: " << value << std::endl;
 						}
 					}
 				}
