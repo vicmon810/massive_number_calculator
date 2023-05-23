@@ -14,17 +14,18 @@ using namespace cosc326;
 int main()
 {
 	cout << "Kia ora World" << std::endl;
-	Integer i = Integer("6");
-	Integer c = Integer("24");
-	Integer d = Integer("6");
-	Integer a = Integer("2");
+	Integer i = Integer("99");
+	Integer c = Integer("11");
+	// Integer d = Integer("4");
+	// Integer a = Integer("-54543434345");
+	// Integer b = Integer(i);
 	// Arithmetic operators
-	i += c;
+	// i += c;
 	// i -= d;
-	// a *= i;
-	// a /= i;
-	// i %= i;
 
+	i += c;
+	// a /= d;
+	// i %= i;
 	cout << i << std ::endl;
 	return 0;
 }

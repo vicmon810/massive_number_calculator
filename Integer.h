@@ -4,6 +4,7 @@
 #define INTEGER_H_INCLUDED
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 namespace cosc326
@@ -18,7 +19,7 @@ namespace cosc326
 		Integer(const std::string &s); // Integer k("123");
 
 		~Integer();
-		int getValue() const;
+		std::string getValue() const;
 		Integer &operator=(const Integer &i); // j = i;
 
 		// Unary operators
@@ -38,7 +39,8 @@ namespace cosc326
 
 	private:
 		// Can add internal storage or methods here
-		int value_int;
+		mutable int value_int;
+		std::stringstream builder;
 		std::string value;
 	};
 
