@@ -112,66 +112,37 @@ namespace cosc326
 		else
 		{
 			// Handle non-sign input
-			int inputLen = input.length() - 1;
-			int localLen = value.length() - 1;
+			int inputLen = input.length();
+			int localLen = value.length();
 			int min = std::min(inputLen, localLen);
 			int max = std::max(inputLen, localLen);
 
 			if (inputLen > localLen)
 			{
-				std::string temp = value;
-				value = input;
-				input = temp; // swap input and local
+				swap(input, value);
 			}
-
-			for (int i = max; i >= max - min; i--)
+			std::string sum = "";
+			int digitDiff = max - min;
+			int carry = 0;
+			int intSum;
+			for (int i = min - 1; i >= 0; i--)
 			{
-				std::cout << value << " Test " << i << std::endl;
-
-				int carrier = 0;
-				char ch1 = value[i];
-				char ch2 = input[i - (max - min)];
-				int num1 = ch1 - '0';
-				int num2 = ch2 - '0';
-				carrier = num1 + num2;
-				int test = max - min;
-				if (carrier < 10)
-				{
-					value[i] = '0' + carrier;
-					std::cout << "HH: " << value << std::endl;
-				}
-				else if (carrier >= 10 && test == 0)
-				{
-					value[i] = '0' + (carrier % 10);
-					std::string newIndex = std::to_string(carrier);
-					char c = newIndex[0];
-					std::cout << c << " " << carrier << std::endl;
-					value.insert(value.begin(), c);
-					std::cout << "FD: " << value << std::endl;
-				}
-				else
-				{
-					value[i] = '0' + (carrier % 10);
-					carrier /= 10;
-					int j = i - 1;
-					std::cout << "MM: " << value << std::endl;
-					while (carrier > 0 && j >= 0)
-					{
-						carrier += value[j] - '0';
-						value[j] = '0' + (carrier % 10);
-						carrier /= 10;
-						j--;
-						std::cout << "CC: " << value << std::endl;
-						if (j < 0 && carrier > 0)
-						{
-							std::string newIndex = std::to_string(carrier);
-							char c = newIndex[0];
-							value.insert(value.begin(), c);
-							std::cout << "DD: " << value << std::endl;
-						}
-					}
-				}
+				intSum = (input[i] - '0') + (value[i + digitDiff] - '0') + carry;
+				sum.push_back(intSum % 10 + '0');
+				carry = intSum / 10;
 			}
+			for (int i = digitDiff - 1; i >= 0; i--)
+			{
+				intSum = (value[i] - '0') + carry;
+				sum.push_back(intSum % 10 + '0');
+				carry = intSum / 10;
+			}
+			if (carry)
+			{
+				sum.push_back(carry + '0');
+			}
+			reverse(sum.begin(), sum.end());
+			value = sum;
 		}
 		return *this;
 	}
@@ -245,53 +216,52 @@ namespace cosc326
 		}
 		else
 		{
-
-			int inputLen = input.length() - 1;
-			int localLen = value.length() - 1;
-			int min = std::min(inputLen, localLen);
-			int max = std::max(inputLen, localLen);
-			if (inputLen > localLen)
-			{ // eg:  1 - 12 / 34 - 153
-				std::string temp = input;
-				input = value;
-				value = temp;
+			Integer i = Integer(value);
+			Integer c = Integer(input);
+			if (c > i)
+			{ // ensure local value is alway bigger than input during calculation
+				swap(value, input);
 				negative = true;
 			}
-			for (int i = max; i >= max - min; i--)
-			{
+			std::string result = "";
+			int inputLen = input.size(), localLen = value.size(); // lenght of input/local
+			int carry = 0;
+			reverse(value.begin(), value.end());
+			reverse(input.begin(), input.end());
 
-				int remain = 0;
-				char ch1 = value[i];
-				char ch2 = input[i - (max - min)];
-				int num1 = ch1 - '0';
-				int num2 = ch2 - '0';
-				remain = num1 - num2;
-				if (remain >= 0)
+			for (int i = 0; i < inputLen; i++)
+			{ // loop thro input
+				int sub = ((value[i] - '0') - (input[i] - '0') - carry);
+				if (sub < 0)
 				{
-					value[i] = '0' + remain;
-				}
-				else if (remain < 0 && i == max - min)
-				{ // last digit
-					remain = num2 - num1;
-					value[i] = '0' + remain;
-
-					negative = true;
+					sub = sub + 10;
+					carry = 1;
 				}
 				else
 				{
-					int num = 10 - num2 + num1;
-					value[i] = '0' + num;
-					int j = i - 1;
-					char ch = value[j];
-					int holder = ch - '0';
-					holder -= 1;
-					value[j] = '0' + holder;
+					carry = 0;
 				}
-
-				if (value[0] == '0')
+				result.push_back(sub + '0');
+			}
+			for (int i = inputLen; i < localLen; i++)
+			{
+				int sub = (value[i] - '0') - carry;
+				if (sub < 0)
 				{
-					value = value.substr(1);
+					sub = sub + 10;
+					carry = 1;
 				}
+				else
+				{
+					carry = 0;
+				}
+				result.push_back(sub + '0');
+			}
+			reverse(result.begin(), result.end());
+			value = result;
+			if (value[0] == '0')
+			{
+				value = value.substr(1);
 			}
 			if (negative)
 			{
@@ -303,13 +273,61 @@ namespace cosc326
 	/*mutiple local value by input i*/
 	Integer &Integer::operator*=(const Integer &i)
 	{
-		value_int *= i.value_int;
+		std::string input = i.value;
+		std::string firstInput = input.substr(0, 1);
+		std::string firstLocal = value.substr(0, 1);
+		std::cout << firstInput << " " << firstLocal << std::endl;
+		if (firstInput == "-")
+		{
+		}
+		else
+		{
+			int inputLen = input.length() - 1;
+			int localLen = value.length() - 1;
+			int max = std::max(inputLen, localLen);
+			int min = std::min(inputLen, localLen);
+			if (inputLen > localLen)
+			{
+				std::string temp = value;
+				value = input;
+				input = temp;
+			}
+			std::string holder((max + 1) + (min + 1), 0);
+			for (int i = max; i >= 0; i--)
+			{
+				for (int j = min; j >= 0; j--)
+				{
+					int n = (value[i] - '0') * (input[j] - '0') + holder[i + j + 1];
+					holder[i + j + 1] = n % 10;
+					holder[i + j] += n / 10;
+				}
+			}
+
+			for (int i = 0; i < holder.size(); i++)
+			{
+				holder[i] += '0';
+			}
+			if (holder[0] == '0')
+			{
+				holder = holder.substr(1);
+			}
+			value = holder;
+		}
+
 		return *this;
 	}
+
 	/*divide local value by input i*/
 	Integer &Integer::operator/=(const Integer &i)
 	{
-		value_int /= i.value_int;
+		Integer i = Integer(value);
+		Integer c = Integer(i.value);
+		if (c > i)
+		{
+			value = 0;
+		}
+		std::string result = "";
+		int i = 0;
 
 		return *this;
 	}
@@ -362,12 +380,58 @@ namespace cosc326
 
 	bool operator<(const Integer &lhs, const Integer &rhs)
 	{
-		return true;
+		std::string str1 = lhs.getValue();
+		std::string str2 = rhs.getValue();
+		int n1 = str1.size(),
+			n2 = str2.size();
+		if (n1 < n2)
+		{
+			return true;
+		}
+		if (n1 > n2)
+		{
+			return false;
+		}
+		for (int i = 0; i < n1; i++)
+		{
+			if (str1[i] < str2[i])
+			{
+				return true;
+			}
+			else if (str1[i] > str2[i])
+			{
+				return false;
+			}
+		}
+		return false;
 	}
 
 	bool operator>(const Integer &lhs, const Integer &rhs)
 	{
-		return true;
+		std::string str1 = lhs.getValue();
+		std::string str2 = rhs.getValue();
+		int n1 = str1.size(),
+			n2 = str2.size();
+		if (n1 < n2)
+		{
+			return false;
+		}
+		if (n1 > n2)
+		{
+			return true;
+		}
+		for (int i = 0; i < n1; i++)
+		{
+			if (str1[i] < str2[i])
+			{
+				return false;
+			}
+			else if (str1[i] > str2[i])
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool operator<=(const Integer &lhs, const Integer &rhs)
@@ -394,5 +458,4 @@ namespace cosc326
 	{
 		return a;
 	}
-
 }
