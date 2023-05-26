@@ -20,8 +20,8 @@ namespace cosc326
 
 		~Integer();
 		std::string getValue() const;
-		void setValue(const std::string &value) const; // setter value
-		Integer &operator=(const Integer &i);		   // j = i;
+		void setValue(std::string &s);		  // setter value
+		Integer &operator=(const Integer &i); // j = i;
 
 		// Unary operators
 		Integer operator-() const; // -j;

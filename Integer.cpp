@@ -1,5 +1,6 @@
 #include "Integer.h"
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <cstring>
 namespace cosc326
@@ -29,16 +30,15 @@ namespace cosc326
 	{
 		return value;
 	}
-
-	// Setter method
-	void Integer::setValue(const std::string &value) const
+	// setter method
+	void Integer ::setValue(std::string &s)
 	{
-		// this->value = value;
+		value = s;
 	}
-
 	// non so sure what is method for
 	Integer &Integer::operator=(const Integer &i)
 	{
+		value = i.getValue();
 		return *this;
 	}
 	// equal to j--;
@@ -314,9 +314,9 @@ namespace cosc326
 				input = temp;
 			}
 			std::string holder((max + 1) + (min + 1), 0);
-			for (int i = max; i >= 0; i--)
+			for (std::string::size_type i = static_cast<std::string::size_type>(max); i != static_cast<std::string::size_type>(-1); --i)
 			{
-				for (int j = min; j >= 0; j--)
+				for (std::string::size_type j = static_cast<std::string::size_type>(min); j != static_cast<std::string::size_type>(-1); --j)
 				{
 					int n = (value[i] - '0') * (input[j] - '0') + holder[i + j + 1];
 					holder[i + j + 1] = n % 10;
@@ -324,7 +324,7 @@ namespace cosc326
 				}
 			}
 
-			for (int i = 0; i < holder.size(); i++)
+			for (std::string::size_type i = 0; i < holder.size(); ++i)
 			{
 				holder[i] += '0';
 			}
@@ -338,7 +338,9 @@ namespace cosc326
 		return *this;
 	}
 
-	/*divide local value by input i*/
+	/*divide local value by input i
+	 * currently it can only have the whole number part;
+	 */
 	Integer &Integer::operator/=(const Integer &i)
 	{
 		Integer p = Integer(value);
@@ -353,22 +355,22 @@ namespace cosc326
 		}
 		std::string result;
 		int divider = std::stoll(i.value);
-		int index = 0;
+		std::string::size_type index = 0;
 		int dividend = value[index] - '0';
 		while (dividend >= divider)
 		{
 			dividend = dividend * 10 + (value[++index] - '0');
 		}
-		while (value.size() > index)
+		while (index < value.size())
 		{
 			result += (dividend / divider) + '0';
 			dividend = (dividend % divider) * 10 + value[++index] - '0';
 		}
-		if (result.size() == 0)
+		if (result.empty())
 		{
 			result = "0";
 		}
-		while (result[0] == '0')
+		while (!result.empty() && result[0] == '0')
 		{
 			result = result.substr(1);
 		}
@@ -379,18 +381,27 @@ namespace cosc326
 	/*remain local value by input i */
 	Integer &Integer::operator%=(const Integer &i)
 	{
-		Integer p = Integer(value);
-		Integer l = Integer(i.value);
-		if (l > p)
+		Integer A = Integer(value);
+		if (i > A)
 		{
-			value = i.value;
+			return *this;
 		}
 		if (i.value == "0")
 		{
-			std::cout << "Error" << std::endl;
+			value = "0";
 		}
+		// A/i = q R r
+		// q * i  + r = A
+		// r =  A - (i* q)
+		Integer q = A / i;
+		Integer r = A - (i * q);
 		std::string result;
-
+		result = r.getValue();
+		while (result[0] == '0')
+		{
+			result = result.substr(1);
+		}
+		value = result;
 		return *this;
 	}
 	/*return sum ot lhs and rhs return it as a Integer*/
@@ -424,18 +435,22 @@ namespace cosc326
 
 	Integer operator%(const Integer &lhs, const Integer &rhs)
 	{
-		return lhs;
+		Integer Result = Integer(lhs);
+		Result %= rhs;
+		return Result;
 	}
-
+	// system out
 	std::ostream &operator<<(std::ostream &os, const Integer &i)
 	{
 		os << i.getValue();
 		return os;
 	}
-
+	// system in, pass input to the local
 	std::istream &operator>>(std::istream &is, Integer &i)
 	{
-
+		std::string input;
+		is >> input;
+		i.setValue(input);
 		return is;
 	}
 
@@ -573,27 +588,46 @@ namespace cosc326
 	{
 		std::string str1 = lhs.getValue();
 		std::string str2 = rhs.getValue();
-		int n1 = str1.size(),
-			n2 = str2.size(), sum1 = 0, sum2 = 0;
+		int n1 = str1.size();
+		int n2 = str2.size();
 
 		if (n1 != n2)
+		{
 			return true;
-		else
-			return false;
+		}
+		int digit1, digit2;
 		for (int i = 0; i < n1; i++)
 		{
-			sum1 += str1[i] - '0';
-			sum2 += str2[i] - '0';
+			digit1 = str1[i] - '0';
+			digit2 = str2[i] - '0';
+			if (digit1 != digit2)
+			{
+				return true;
+			}
 		}
-		if (sum1 != sum2)
-			return true;
-		else
-			return false;
+
+		// Compare the sorted strings
 		return false;
 	}
 
 	Integer gcd(const Integer &a, const Integer &b)
 	{
-		return a;
+
+		Integer n1 = a;
+		Integer n2 = b;
+		Integer i = Integer("1");
+		while (n1 != n2)
+		{
+			if (n1 > n2)
+			{
+				n1 -= n2;
+			}
+			else
+			{
+				n2 -= n1;
+			}
+		}
+
+		return n1;
 	}
 }
