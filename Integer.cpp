@@ -29,6 +29,13 @@ namespace cosc326
 	{
 		return value;
 	}
+
+	// Setter method
+	void Integer::setValue(const std::string &value) const
+	{
+		// this->value = value;
+	}
+
 	// non so sure what is method for
 	Integer &Integer::operator=(const Integer &i)
 	{
@@ -37,15 +44,29 @@ namespace cosc326
 	// equal to j--;
 	Integer Integer::operator-() const
 	{
-
-		value_int--;
-		return Integer(*this);
+		std::string result = value; // Make a copy of value
+		if (result[result.size() - 1] == '0')
+		{
+			char ch = result[result.size() - 2] - '0' - 1;
+			result[result.size() - 2] = ch + '0'; // Assign the modified value to the copy
+		}
+		else
+		{
+			char ch1 = result[result.size() - 1] - '0';
+			int num = ch1 - 1;
+			result[result.size() - 1] = num + '0'; // Assign the modified value to the copy
+		}
+		return Integer(result);
 	}
+
 	// equal to j++;
 	Integer Integer::operator+() const
 	{
-		value_int++;
-		return Integer(*this);
+		Integer p = Integer("1");
+		Integer c = Integer(value);
+		c += p;
+		std::string result = c.getValue();
+		return Integer(result);
 	}
 	/*accumulate local value by input i*/
 	Integer &Integer::operator+=(const Integer &i)
@@ -320,21 +341,56 @@ namespace cosc326
 	/*divide local value by input i*/
 	Integer &Integer::operator/=(const Integer &i)
 	{
-		Integer i = Integer(value);
-		Integer c = Integer(i.value);
-		if (c > i)
+		Integer p = Integer(value);
+		Integer l = Integer(i.value);
+		if (l > p)
 		{
-			value = 0;
+			value = "0";
 		}
-		std::string result = "";
-		int i = 0;
-
+		if (i.value == "0")
+		{
+			std::cout << "Error" << std::endl;
+		}
+		std::string result;
+		int divider = std::stoll(i.value);
+		int index = 0;
+		int dividend = value[index] - '0';
+		while (dividend >= divider)
+		{
+			dividend = dividend * 10 + (value[++index] - '0');
+		}
+		while (value.size() > index)
+		{
+			result += (dividend / divider) + '0';
+			dividend = (dividend % divider) * 10 + value[++index] - '0';
+		}
+		if (result.size() == 0)
+		{
+			result = "0";
+		}
+		while (result[0] == '0')
+		{
+			result = result.substr(1);
+		}
+		value = result;
 		return *this;
 	}
+
 	/*remain local value by input i */
 	Integer &Integer::operator%=(const Integer &i)
 	{
-		value_int %= i.value_int;
+		Integer p = Integer(value);
+		Integer l = Integer(i.value);
+		if (l > p)
+		{
+			value = i.value;
+		}
+		if (i.value == "0")
+		{
+			std::cout << "Error" << std::endl;
+		}
+		std::string result;
+
 		return *this;
 	}
 	/*return sum ot lhs and rhs return it as a Integer*/
@@ -348,18 +404,22 @@ namespace cosc326
 	Integer operator-(const Integer &lhs, const Integer &rhs)
 	{
 		Integer result = Integer(lhs);
-		result += rhs;
+		result -= rhs;
 		return result;
 	}
 
 	Integer operator*(const Integer &lhs, const Integer &rhs)
 	{
-		return lhs;
+		Integer result = Integer(lhs);
+		result *= rhs;
+		return result;
 	}
 
 	Integer operator/(const Integer &lhs, const Integer &rhs)
 	{
-		return lhs;
+		Integer result = Integer(lhs);
+		result /= rhs;
+		return result;
 	}
 
 	Integer operator%(const Integer &lhs, const Integer &rhs)
@@ -375,6 +435,7 @@ namespace cosc326
 
 	std::istream &operator>>(std::istream &is, Integer &i)
 	{
+
 		return is;
 	}
 
@@ -436,22 +497,99 @@ namespace cosc326
 
 	bool operator<=(const Integer &lhs, const Integer &rhs)
 	{
-		return true;
+		std::string str1 = lhs.getValue();
+		std::string str2 = rhs.getValue();
+		int n1 = str1.size(),
+			n2 = str2.size();
+		if (n1 <= n2)
+		{
+			return true;
+		}
+		if (n1 > n2)
+		{
+			return false;
+		}
+		for (int i = 0; i < n1; i++)
+		{
+			if (str1[i] <= str2[i])
+			{
+				return true;
+			}
+			else if (str1[i] > str2[i])
+			{
+				return false;
+			}
+		}
+		return false;
 	}
 
 	bool operator>=(const Integer &lhs, const Integer &rhs)
 	{
-		return true;
+		std::string str1 = lhs.getValue();
+		std::string str2 = rhs.getValue();
+		int n1 = str1.size(),
+			n2 = str2.size();
+		if (n1 < n2)
+		{
+			return false;
+		}
+		if (n1 >= n2)
+		{
+			return true;
+		}
+		for (int i = 0; i < n1; i++)
+		{
+			if (str1[i] < str2[i])
+			{
+				return false;
+			}
+			else if (str1[i] >= str2[i])
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool operator==(const Integer &lhs, const Integer &rhs)
 	{
-		return true;
+		std::string str1 = lhs.getValue();
+		std::string str2 = rhs.getValue();
+		int n1 = str1.size(),
+			n2 = str2.size(), sum1 = 0, sum2 = 0;
+		if (n1 == n2)
+			return true;
+		for (int i = 0; i < n1; i++)
+		{
+			sum1 += str1[i] - '0';
+			sum2 += str2[i] - '0';
+		}
+		if (sum1 == sum2)
+			return true;
+		return false;
 	}
 
 	bool operator!=(const Integer &lhs, const Integer &rhs)
 	{
-		return true;
+		std::string str1 = lhs.getValue();
+		std::string str2 = rhs.getValue();
+		int n1 = str1.size(),
+			n2 = str2.size(), sum1 = 0, sum2 = 0;
+
+		if (n1 != n2)
+			return true;
+		else
+			return false;
+		for (int i = 0; i < n1; i++)
+		{
+			sum1 += str1[i] - '0';
+			sum2 += str2[i] - '0';
+		}
+		if (sum1 != sum2)
+			return true;
+		else
+			return false;
+		return false;
 	}
 
 	Integer gcd(const Integer &a, const Integer &b)
