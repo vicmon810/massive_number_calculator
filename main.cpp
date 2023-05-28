@@ -17,11 +17,18 @@ int main()
 {
 	Integer i = Integer();
 	Integer x = Integer("12");
-	Integer y = Integer("17");
+	Integer y = Integer("-17");
 	+y;
-	cout << y << endl; // 16
+	cout << y << endl; // 12
 	-x;
-	cout << x << endl; // 11
+	cout << x << endl; // 17
 	Integer copy = Integer(x);
+	i += copy;
+	cout << i << endl; // 12
+	cout << y << endl;
+	Integer o = y / x;
+	cout << o << endl;
+	y %= x;
+	cout << y << endl;
 	return 0;
 }

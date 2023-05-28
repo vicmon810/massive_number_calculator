@@ -22,7 +22,7 @@ namespace cosc326
 		std::string getValue() const;
 		void setValue(std::string &s);		  // setter value
 		Integer &operator=(const Integer &i); // j = i;
-		Integer abs(const Integer &i);		  // return absolute value
+		friend Integer abs(const Integer &i); // return absolute value
 		// Unary operators
 		Integer operator-() const; // -j;
 		Integer operator+() const; // +j;

@@ -9,6 +9,7 @@ namespace cosc326
 	/*default Constructor*/
 	Integer::Integer()
 	{
+		// cout << "here" << endl;
 		value = "0";
 	}
 	/*passing int convert to String*/
@@ -389,69 +390,43 @@ namespace cosc326
 	 */
 	Integer &Integer::operator/=(const Integer &i)
 	{
-		Integer p = Integer(value);
-		Integer l = Integer(i.value);
+		Integer f = Integer(value);
+		Integer p = abs(f);
+		Integer l = abs(i);
 		if (l > p)
 		{
 			value = "0";
 		}
-		if (i.value == "0")
+		else if (i.value == "0")
 		{
 			value = "0";
 		}
-		std::string input = i.value;
-		char inputSign = input[0];
-		char localSign = value[0];
-		if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
+		else
 		{
+			std::string input = i.value;
+			char inputSign = input[0];
+			char localSign = value[0];
 
-			std::string x = value.substr(1);
-			Integer X = Integer(x);
-			X /= i;
-			value = "-" + X.getValue();
-		}
-		else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
-		{
-
-			std::string y = input.substr(1);
-			Integer X = Integer(value);
-			Integer Y = Integer(y);
-			X /= Y;
-			value = "-" + X.getValue();
-		}
-		else if (inputSign == '-' && localSign == '-')
-		{
-
-			std::string x = value.substr(1);
-			std::string y = input.substr(1);
-			Integer X = Integer(x);
-			Integer Y = Integer(y);
-			X /= Y;
-			value = X.getValue();
-		}
-		else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
-		{
-
-			if (inputSign == '-')
+			if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
 			{
+
 				std::string x = value.substr(1);
-				std::string y = input.substr(1);
 				Integer X = Integer(x);
+				X /= i;
+				value = "-" + X.getValue();
+			}
+			else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
+			{
+
+				std::string y = input.substr(1);
+				Integer X = Integer(value);
 				Integer Y = Integer(y);
 				X /= Y;
 				value = "-" + X.getValue();
 			}
-			else if (localSign == '-')
+			else if (inputSign == '-' && localSign == '-')
 			{
-				std::string x = value.substr(1);
-				std::string y = input.substr(1);
-				Integer X = Integer(x);
-				Integer Y = Integer(y);
-				X /= Y;
-				value = "-" + X.getValue();
-			}
-			else
-			{
+
 				std::string x = value.substr(1);
 				std::string y = input.substr(1);
 				Integer X = Integer(x);
@@ -459,31 +434,65 @@ namespace cosc326
 				X /= Y;
 				value = X.getValue();
 			}
-		}
-		else
-		{
-			std::string result;
-			int divider = std::stoll(i.value);
-			std::string::size_type index = 0;
-			int dividend = value[index] - '0';
-			while (dividend >= divider)
+			else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
 			{
-				dividend = dividend * 10 + (value[++index] - '0');
+
+				if (inputSign == '-')
+				{
+
+					std::string x = value.substr(1);
+					std::string y = input.substr(1);
+					Integer X = Integer(x);
+					Integer Y = Integer(y);
+					X /= Y;
+					value = "-" + X.getValue();
+				}
+				else if (localSign == '-')
+				{
+
+					std::string x = value.substr(1);
+					std::string y = input.substr(1);
+					Integer X = Integer(x);
+					Integer Y = Integer(y);
+					X /= Y;
+					value = "-" + X.getValue();
+				}
+				else
+				{
+
+					std::string x = value.substr(1);
+					std::string y = input.substr(1);
+					Integer X = Integer(x);
+					Integer Y = Integer(y);
+					X /= Y;
+					value = X.getValue();
+				}
 			}
-			while (index < value.size())
+			else
 			{
-				result += (dividend / divider) + '0';
-				dividend = (dividend % divider) * 10 + value[++index] - '0';
+				std::string result;
+				int divider = std::stoll(i.value);
+				std::string::size_type index = 0;
+				int dividend = value[index] - '0';
+				while (dividend >= divider)
+				{
+					dividend = dividend * 10 + (value[++index] - '0');
+				}
+				while (index < value.size())
+				{
+					result += (dividend / divider) + '0';
+					dividend = (dividend % divider) * 10 + value[++index] - '0';
+				}
+				if (result.empty())
+				{
+					result = "0";
+				}
+				while (!result.empty() && result[0] == '0')
+				{
+					result = result.substr(1);
+				}
+				value = result;
 			}
-			if (result.empty())
-			{
-				result = "0";
-			}
-			while (!result.empty() && result[0] == '0')
-			{
-				result = result.substr(1);
-			}
-			value = result;
 		}
 		return *this;
 	}
