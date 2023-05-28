@@ -1,5 +1,21 @@
 # Rational Thinking:
-magically Integer part is finished.
+In this project, we will be developing a wheel that was conceptualized by several individuals nearly 30 years ago. The program consists of two main components: Integer and Rational. The Integer component is designed for performing calculations with whole numbers, which can have an infinite length similar to Java's BigInteger class. On the other hand, the Rational component handles calculations involving decimal numbers, allowing for potentially infinite precision, much like Java's BigDecimal class.
+
+Our objective is to reimplement and refine the original concept, taking advantage of modern technologies and advancements in the field. By doing so, we aim to create a robust and efficient solution that meets the needs of various applications requiring extensive numerical calculations.
+
+The Integer part of the program will offer comprehensive functionality for performing operations on large whole numbers. This will allow us to handle computations involving numbers that exceed the limits of standard data types, ensuring accurate and reliable results. With this component, we can tackle complex mathematical problems that require precision and a wide range of integer values.
+
+The Rational component, on the other hand, will be responsible for handling decimal numbers with arbitrary precision. By utilizing sophisticated algorithms and techniques, we can perform calculations on decimal values that may have infinite lengths after the decimal point. This capability will be particularly valuable in scenarios where high precision is vital, such as financial calculations or scientific research.
+
+To ensure the efficiency and reliability of our solution, we will carefully optimize the algorithms and data structures used in both components. By leveraging the power of modern computing systems, we can achieve optimal performance, even when dealing with extremely large or highly precise numbers. Additionally, we will prioritize code maintainability and readability, allowing for easy integration into existing projects or further enhancements in the future.
+
+By revisiting and revitalizing this project, we aim to contribute to the computational landscape and provide developers with powerful tools for numerical analysis. Our endeavor is rooted in the desire to build upon the knowledge and efforts of those who paved the way, while incorporating the advancements of the past three decades.
+
+
+
+### Usage :
+In order to run this Integer calculation please compile Integer class first with command : `g++ -Wall -c Integer.cpp -o Integer.o` then compile main class with command `g++ -Wall main.cpp Integer.o -o main` finally enter command `./main` to run it.
+
 
 
 ### Test Case :
@@ -49,4 +65,25 @@ magically Integer part is finished.
 |#5.7|Operator %=|-A %= +B|OK|
 |#5.8|Operator %=|+A %= -B|OK|
 |#5.9|Operator %=|both A and B are long number|OK|
-|#6.1|
+|#6.1|Operator < | A < B (A is smaller)| OK|
+|#6.2|Operator < | A < B (A is bigger)| OK|
+|#6.3|Operator > | A > B (A is smaller)| OK|
+|#6.4|Operator > | A > B (A is bigger)| OK|
+|#6.5| Operator >=| A >= B( A is smaller)| OK|
+|#6.6|Operator >=| A >=B(A is bigger)| OK|
+|#6.7|Operator >=| A >= B (A == B)| OK|
+|#6.8|Operator <=| A <= B (A is smaller)|OK|
+|#6.9|Operator <=| A <= B(A is bigger)|OK|
+|#6.10|Operator <= | A <= B (A == B)|OK|
+|#6.11| Operator ==| A == B (A !=B)| OK|
+|#6.12|Operator == | A == B (A == B)|OK|
+|#6.13| Operator !=| A != B (A ==B)|OK|
+|#6.14| Operator !=| A != B (A!=B)|OK|
+|#7.1| Operator +|  +A| OK|
+|#7.2|Operator -| -A |OK|
+|#8.1| Operator +(Binary operators)| A + B|OK|
+|#8.2| Operator - (Binary operators)| A -B|OK|
+|#8.3| Operator * (Binary operators)| A * B|OK|
+|#8.4|Operator / (Binary operators)| A /B |OK|
+|#8.5| Operator % (Binary operators)| A % B|OK|
+|#9.1| gcd | gcd (A,B)|OK| 
