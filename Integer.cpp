@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <cstring>
+using namespace std;
 namespace cosc326
 {
 	/*default Constructor*/
@@ -35,31 +36,45 @@ namespace cosc326
 	{
 		value = s;
 	}
-	// non so sure what is method for
+	/*
+	 *@desc: return absolute value of input
+	 *@param a: value needs to be return its abs
+	 */
+	Integer abs(const Integer &a)
+	{
+		std::string str = a.getValue();
+		char ch = str[0];
+		if (ch == '-' || ch == '+')
+		{
+			str = str.substr(1);
+		}
+		Integer result = Integer(str);
+		return result;
+	}
+	/*@Desc: overwrite local value by incoming value Integer i
+	 *@param i : incoming Integer
+	 *@return : local Integer value
+	 */
 	Integer &Integer::operator=(const Integer &i)
 	{
 		value = i.getValue();
 		return *this;
 	}
-	// equal to j--;
+	/*@Desc: decrease local value by 1
+	 *@return: local value -1;
+	 */
 	Integer Integer::operator-() const
 	{
-		std::string result = value; // Make a copy of value
-		if (result[result.size() - 1] == '0')
-		{
-			char ch = result[result.size() - 2] - '0' - 1;
-			result[result.size() - 2] = ch + '0'; // Assign the modified value to the copy
-		}
-		else
-		{
-			char ch1 = result[result.size() - 1] - '0';
-			int num = ch1 - 1;
-			result[result.size() - 1] = num + '0'; // Assign the modified value to the copy
-		}
+		Integer p = Integer("1");
+		Integer c = Integer(value);
+		c -= p;
+		std::string result = c.getValue();
 		return Integer(result);
 	}
 
-	// equal to j++;
+	/*@Desc: increase local value by 1
+	 *@return: local value +1;
+	 */
 	Integer Integer::operator+() const
 	{
 		Integer p = Integer("1");
@@ -68,7 +83,9 @@ namespace cosc326
 		std::string result = c.getValue();
 		return Integer(result);
 	}
-	/*accumulate local value by input i*/
+	/*@desc: accumulate local value by input i
+	 *@param:
+	 */
 	Integer &Integer::operator+=(const Integer &i)
 	{
 		std::string input = i.value;
@@ -168,77 +185,47 @@ namespace cosc326
 		return *this;
 	}
 
-	/*substruc local value by input i*/
 	Integer &Integer::operator-=(const Integer &i)
 	{
-		std::string input = i.value;
+		std::string input = i.getValue();
 		std::string firstInput = input.substr(0, 1);
 		std::string firstLocal = value.substr(0, 1);
 		bool negative = false;
-		if (firstInput.compare("-") == 0 && firstLocal.compare("+") == 0)
-		{ //+x - -y == x + y
+
+		if (firstInput == "-" && firstLocal != "-")
+		{ // +x - -y == x + y
 			Integer x = Integer(value.substr(1));
 			Integer y = Integer(input.substr(1));
 			x += y;
 			value = x.getValue();
 		}
-		else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
+		else if (firstInput == "+" && firstLocal == "-")
 		{ //-x - +y =  - (x+y)
 			Integer x = Integer(value.substr(1));
 			Integer y = Integer(input.substr(1));
 			x += y;
 			value = "-" + x.getValue();
 		}
-		else if (firstInput.compare("+") == 0 && firstLocal.compare("+") == 0)
+		else if (firstInput == "+" && firstLocal == "+")
 		{ // +x - +y = x - y;
 			Integer x = Integer(value.substr(1));
 			Integer y = Integer(input.substr(1));
+
 			x -= y;
 			value = x.getValue();
 		}
-		else if (firstInput.compare("-") == 0 && firstLocal.compare("-") == 0)
+		else if (firstInput == "-" && firstLocal == "-")
 		{ // -x - -y = y - x
-
 			Integer x = Integer(value.substr(1));
 			Integer y = Integer(input.substr(1));
-			y -= x;
-			value = x.getValue();
-		}
-		else if (firstInput.compare("-") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-		{ // x - -y = x + y
-			Integer x = Integer(value);
-			Integer y = Integer(input.substr(1));
-			std::cout << x << "x" << std::endl;
-			std::cout << y << "y" << std::endl;
-			x += y;
-			std::cout << x << " " << y << std::endl;
-			value = x.getValue();
-		}
-		else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-		{ // x - +y = x - y
-			Integer x = Integer(value);
-			Integer y = Integer(input.substr(1));
-			x += y;
-			value = x.getValue();
-		}
-		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
-		{ //-x - y = y - x
-			Integer x = Integer(value.substr(1));
-			Integer y = Integer(input);
 			y -= x;
 			value = y.getValue();
-		}
-		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
-		{ // + x + y = x + y
-			Integer x = Integer(value.substr(1));
-			Integer y = Integer(input);
-			x += y;
-			value = x.getValue();
 		}
 		else
 		{
 			Integer i = Integer(value);
 			Integer c = Integer(input);
+
 			if (c > i)
 			{ // ensure local value is alway bigger than input during calculation
 				swap(value, input);
@@ -278,12 +265,16 @@ namespace cosc326
 				}
 				result.push_back(sub + '0');
 			}
+
+			result.erase(std::remove_if(result.begin(), result.end(), ::isspace), result.end()); // just in case there is unwanted space
 			reverse(result.begin(), result.end());
 			value = result;
-			if (value[0] == '0')
+
+			if (value[0] == '0' || value[0] == ' ')
 			{
 				value = value.substr(1);
 			}
+
 			if (negative)
 			{
 				value = "-" + value;
@@ -291,15 +282,70 @@ namespace cosc326
 		}
 		return *this;
 	}
+
 	/*mutiple local value by input i*/
 	Integer &Integer::operator*=(const Integer &i)
 	{
 		std::string input = i.value;
-		std::string firstInput = input.substr(0, 1);
-		std::string firstLocal = value.substr(0, 1);
-		std::cout << firstInput << " " << firstLocal << std::endl;
-		if (firstInput == "-")
+		char inputSign = input[0];
+		char localSign = value[0];
+		if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
 		{
+
+			std::string x = value.substr(1);
+			Integer X = Integer(x);
+			X *= i;
+			value = "-" + X.getValue();
+		}
+		else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
+		{
+
+			std::string y = input.substr(1);
+			Integer X = Integer(value);
+			Integer Y = Integer(y);
+			X *= Y;
+			value = "-" + X.getValue();
+		}
+		else if (inputSign == '-' && localSign == '-')
+		{
+
+			std::string x = value.substr(1);
+			std::string y = input.substr(1);
+			Integer X = Integer(x);
+			Integer Y = Integer(y);
+			X *= Y;
+			value = X.getValue();
+		}
+		else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
+		{
+
+			if (inputSign == '-')
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X *= Y;
+				value = "-" + X.getValue();
+			}
+			else if (localSign == '-')
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X *= Y;
+				value = "-" + X.getValue();
+			}
+			else
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X *= Y;
+				value = X.getValue();
+			}
 		}
 		else
 		{
@@ -351,57 +397,185 @@ namespace cosc326
 		}
 		if (i.value == "0")
 		{
-			std::cout << "Error" << std::endl;
+			value = "0";
 		}
-		std::string result;
-		int divider = std::stoll(i.value);
-		std::string::size_type index = 0;
-		int dividend = value[index] - '0';
-		while (dividend >= divider)
+		std::string input = i.value;
+		char inputSign = input[0];
+		char localSign = value[0];
+		if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
 		{
-			dividend = dividend * 10 + (value[++index] - '0');
+
+			std::string x = value.substr(1);
+			Integer X = Integer(x);
+			X /= i;
+			value = "-" + X.getValue();
 		}
-		while (index < value.size())
+		else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
 		{
-			result += (dividend / divider) + '0';
-			dividend = (dividend % divider) * 10 + value[++index] - '0';
+
+			std::string y = input.substr(1);
+			Integer X = Integer(value);
+			Integer Y = Integer(y);
+			X /= Y;
+			value = "-" + X.getValue();
 		}
-		if (result.empty())
+		else if (inputSign == '-' && localSign == '-')
 		{
-			result = "0";
+
+			std::string x = value.substr(1);
+			std::string y = input.substr(1);
+			Integer X = Integer(x);
+			Integer Y = Integer(y);
+			X /= Y;
+			value = X.getValue();
 		}
-		while (!result.empty() && result[0] == '0')
+		else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
 		{
-			result = result.substr(1);
+
+			if (inputSign == '-')
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X /= Y;
+				value = "-" + X.getValue();
+			}
+			else if (localSign == '-')
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X /= Y;
+				value = "-" + X.getValue();
+			}
+			else
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X /= Y;
+				value = X.getValue();
+			}
 		}
-		value = result;
+		else
+		{
+			std::string result;
+			int divider = std::stoll(i.value);
+			std::string::size_type index = 0;
+			int dividend = value[index] - '0';
+			while (dividend >= divider)
+			{
+				dividend = dividend * 10 + (value[++index] - '0');
+			}
+			while (index < value.size())
+			{
+				result += (dividend / divider) + '0';
+				dividend = (dividend % divider) * 10 + value[++index] - '0';
+			}
+			if (result.empty())
+			{
+				result = "0";
+			}
+			while (!result.empty() && result[0] == '0')
+			{
+				result = result.substr(1);
+			}
+			value = result;
+		}
 		return *this;
 	}
 
 	/*remain local value by input i */
 	Integer &Integer::operator%=(const Integer &i)
 	{
-		Integer A = Integer(value);
-		if (i > A)
+		std::string input = i.value;
+		char inputSign = input[0];
+		char localSign = value[0];
+		if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
 		{
-			return *this;
+
+			std::string x = value.substr(1);
+			Integer X = Integer(x);
+			X %= i;
+			value = "-" + X.getValue();
 		}
-		if (i.value == "0")
+		else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
 		{
-			value = "0";
+
+			std::string y = input.substr(1);
+			Integer X = Integer(value);
+			Integer Y = Integer(y);
+			X %= Y;
+			value = "-" + X.getValue();
 		}
-		// A/i = q R r
-		// q * i  + r = A
-		// r =  A - (i* q)
-		Integer q = A / i;
-		Integer r = A - (i * q);
-		std::string result;
-		result = r.getValue();
-		while (result[0] == '0')
+		else if (inputSign == '-' && localSign == '-')
 		{
-			result = result.substr(1);
+
+			std::string x = value.substr(1);
+			std::string y = input.substr(1);
+			Integer X = Integer(x);
+			Integer Y = Integer(y);
+			X %= Y;
+			value = "-" + X.getValue();
 		}
-		value = result;
+		else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
+		{
+
+			if (inputSign == '-')
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X %= Y;
+				value = "-" + X.getValue();
+			}
+			else if (localSign == '-')
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X %= Y;
+				value = "-" + X.getValue();
+			}
+			else
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Integer X = Integer(x);
+				Integer Y = Integer(y);
+				X %= Y;
+				value = X.getValue();
+			}
+		}
+		else
+		{
+			Integer A = Integer(value);
+			if (i > A)
+			{
+				return *this;
+			}
+			if (i.value == "0")
+			{
+				value = "0";
+			}
+			// A/i = q R r
+			// q * i  + r = A
+			// r =  A - (i* q)
+			Integer q = A / i;
+			Integer r = A - (i * q);
+			std::string result;
+			result = r.getValue();
+			while (result[0] == '0')
+			{
+				result = result.substr(1);
+			}
+			value = result;
+		}
 		return *this;
 	}
 	/*return sum ot lhs and rhs return it as a Integer*/
@@ -456,27 +630,75 @@ namespace cosc326
 
 	bool operator<(const Integer &lhs, const Integer &rhs)
 	{
+		if (lhs == rhs)
+		{
+			return false;
+		}
+
 		std::string str1 = lhs.getValue();
 		std::string str2 = rhs.getValue();
-		int n1 = str1.size(),
-			n2 = str2.size();
-		if (n1 < n2)
+		int n1 = str1.size();
+		int n2 = str2.size();
+		char str1Sign = str1[0];
+		char str2Sign = str2[0];
+		if (str1Sign == str2Sign && (str1Sign == '-' || str1Sign == '+'))
+		{ // if the sign is same
+			Integer x = Integer(str1.substr(1));
+			Integer y = Integer(str2.substr(1));
+			if (str1Sign == '+')
+			{
+				return (x < y);
+			}
+			else
+			{
+				return (x > y);
+			}
+		}
+		else if (str1Sign == '+' && (str2Sign != '-' && str2Sign != '+'))
+		{
+			Integer x = Integer(str1.substr(1));
+			return (x < rhs);
+		}
+		else if (str1Sign == '-' && (str2Sign != '-' && str2Sign != '+'))
+		{ // lhs = negative  rhs = positive
+			return true;
+		}
+		else if ((str1Sign != '-' && str1Sign != '+') && str2Sign == '+')
+		{
+			Integer y = Integer(str2.substr(1));
+			return (lhs < y);
+		}
+		else if ((str1Sign != '-' && str1Sign != '+') && str2Sign == '-')
+		{
+			return false;
+		}
+		else if (str1Sign == '+' && str2Sign == '-')
+		{
+			return false;
+		}
+		else if (str1Sign == '-' && str2Sign == '+')
 		{
 			return true;
 		}
+
 		if (n1 > n2)
 		{
 			return false;
 		}
-		for (int i = 0; i < n1; i++)
+		else if (n2 > n1)
 		{
-			if (str1[i] < str2[i])
+			return true;
+		}
+		else
+		{
+			for (int i = 0; i < n2; i++)
 			{
-				return true;
-			}
-			else if (str1[i] > str2[i])
-			{
-				return false;
+				int num1 = str1[i] - '0';
+				int num2 = str2[i] - '0';
+				if (num1 > num2)
+				{
+					return false;
+				}
 			}
 		}
 		return false;
@@ -484,27 +706,79 @@ namespace cosc326
 
 	bool operator>(const Integer &lhs, const Integer &rhs)
 	{
-		std::string str1 = lhs.getValue();
-		std::string str2 = rhs.getValue();
-		int n1 = str1.size(),
-			n2 = str2.size();
-		if (n1 < n2)
+		if (lhs == rhs)
 		{
 			return false;
 		}
-		if (n1 > n2)
+
+		std::string str1 = lhs.getValue();
+		std::string str2 = rhs.getValue();
+		int n1 = str1.size();
+		int n2 = str2.size();
+		char str1Sign = str1[0];
+		char str2Sign = str2[0];
+		if (str1Sign == str2Sign && (str1Sign == '-' || str1Sign == '+'))
+		{ // if the sign is same
+			Integer x = Integer(str1.substr(1));
+			Integer y = Integer(str2.substr(1));
+			if (str1Sign == '+')
+			{
+				return (x > y);
+			}
+			else
+			{
+				return (x < y);
+			}
+		}
+		else if (str1Sign == '+' && (str2Sign != '-' && str2Sign != '+'))
+		{
+			Integer x = Integer(str1.substr(1));
+			return (x > rhs);
+		}
+		else if (str1Sign == '-' && (str2Sign != '-' && str2Sign != '+'))
+		{ // lhs = negative  rhs = positive
+			return false;
+		}
+		else if ((str1Sign != '-' && str1Sign != '+') && str2Sign == '+')
+		{
+			Integer y = Integer(str2.substr(1));
+			return (lhs > y);
+		}
+		else if ((str1Sign != '-' && str1Sign != '+') && str2Sign == '-')
 		{
 			return true;
 		}
-		for (int i = 0; i < n1; i++)
+		else if (str1Sign == '+' && str2Sign == '-')
 		{
-			if (str1[i] < str2[i])
+			return true;
+		}
+		else if (str1Sign == '-' && str2Sign == '+')
+		{
+			return false;
+		}
+		else
+		{
+			if (n1 > n2)
 			{
+
+				return true;
+			}
+			else if (n2 > n1)
+			{
+
 				return false;
 			}
-			else if (str1[i] > str2[i])
+			else
 			{
-				return true;
+				for (int i = 0; i < n2; i++)
+				{
+					int num1 = str1[i] - '0';
+					int num2 = str2[i] - '0';
+					if (num1 > num2)
+					{
+						return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -512,58 +786,18 @@ namespace cosc326
 
 	bool operator<=(const Integer &lhs, const Integer &rhs)
 	{
-		std::string str1 = lhs.getValue();
-		std::string str2 = rhs.getValue();
-		int n1 = str1.size(),
-			n2 = str2.size();
-		if (n1 <= n2)
-		{
+		if (lhs == rhs)
 			return true;
-		}
-		if (n1 > n2)
-		{
-			return false;
-		}
-		for (int i = 0; i < n1; i++)
-		{
-			if (str1[i] <= str2[i])
-			{
-				return true;
-			}
-			else if (str1[i] > str2[i])
-			{
-				return false;
-			}
-		}
-		return false;
+		else
+			return (lhs > rhs);
 	}
 
 	bool operator>=(const Integer &lhs, const Integer &rhs)
 	{
-		std::string str1 = lhs.getValue();
-		std::string str2 = rhs.getValue();
-		int n1 = str1.size(),
-			n2 = str2.size();
-		if (n1 < n2)
-		{
-			return false;
-		}
-		if (n1 >= n2)
-		{
+		if (lhs == rhs)
 			return true;
-		}
-		for (int i = 0; i < n1; i++)
-		{
-			if (str1[i] < str2[i])
-			{
-				return false;
-			}
-			else if (str1[i] >= str2[i])
-			{
-				return true;
-			}
-		}
-		return false;
+		else
+			return (lhs > rhs);
 	}
 
 	bool operator==(const Integer &lhs, const Integer &rhs)
@@ -572,62 +806,69 @@ namespace cosc326
 		std::string str2 = rhs.getValue();
 		int n1 = str1.size(),
 			n2 = str2.size(), sum1 = 0, sum2 = 0;
-		if (n1 == n2)
-			return true;
-		for (int i = 0; i < n1; i++)
+		if ((str1[0] == '+' && str2[0] != '-') || (str1[0] != '-' && str2[0] == '+'))
 		{
-			sum1 += str1[i] - '0';
-			sum2 += str2[i] - '0';
+			if (str1[0] == '+')
+			{
+				Integer x = Integer(str1.substr(1));
+				return (x == rhs);
+			}
+			if (str2[0] == '+')
+			{
+				Integer y = Integer(str2.substr(1));
+				return (lhs == y);
+			}
 		}
-		if (sum1 == sum2)
-			return true;
+		if (str1[0] != str2[0])
+		{
+			return false;
+		}
+		else
+		{
+			if (n1 != n2)
+			{
+				return false;
+			}
+			else
+			{
+				int index = 0;
+				while (str1[index] == str2[index])
+				{
+					index++;
+					if (index == n1)
+						return true;
+				}
+			}
+		}
 		return false;
 	}
 
 	bool operator!=(const Integer &lhs, const Integer &rhs)
 	{
-		std::string str1 = lhs.getValue();
-		std::string str2 = rhs.getValue();
-		int n1 = str1.size();
-		int n2 = str2.size();
-
-		if (n1 != n2)
-		{
+		if (lhs == rhs)
+			return false;
+		else
 			return true;
-		}
-		int digit1, digit2;
-		for (int i = 0; i < n1; i++)
-		{
-			digit1 = str1[i] - '0';
-			digit2 = str2[i] - '0';
-			if (digit1 != digit2)
-			{
-				return true;
-			}
-		}
-
-		// Compare the sorted strings
-		return false;
 	}
-
 	Integer gcd(const Integer &a, const Integer &b)
 	{
+		Integer n1 = abs(a);
+		Integer n2 = abs(b);
 
-		Integer n1 = a;
-		Integer n2 = b;
-		Integer i = Integer("1");
 		while (n1 != n2)
 		{
 			if (n1 > n2)
 			{
+
 				n1 -= n2;
 			}
 			else
 			{
+
 				n2 -= n1;
 			}
+			// break;
 		}
-
 		return n1;
 	}
 }
