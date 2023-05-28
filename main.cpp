@@ -16,8 +16,8 @@ using namespace cosc326;
 int main()
 {
 	Integer i = Integer();
-	Integer x = Integer("12");
-	Integer y = Integer("-17");
+	Integer x = Integer("-12");
+	Integer y = Integer("17");
 	+y;
 	cout << y << endl; // 12
 	-x;
@@ -30,5 +30,7 @@ int main()
 	cout << o << endl;
 	y %= x;
 	cout << y << endl;
+	Integer a = gcd(y, i);
+	cout << a << endl;
 	return 0;
 }
