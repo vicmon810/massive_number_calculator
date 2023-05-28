@@ -4,7 +4,6 @@
 	// 0 = false
 */
 
-#include "Rational.h"
 #include <iostream>
 using namespace std;
 
@@ -15,22 +14,25 @@ using namespace cosc326;
 
 int main()
 {
-	Integer i = Integer();
-	Integer x = Integer("-12");
-	Integer y = Integer("17");
-	+y;
-	cout << y << endl; // 12
-	-x;
-	cout << x << endl; // 17
-	Integer copy = Integer(x);
-	i += copy;
-	cout << i << endl; // 12
-	cout << y << endl;
-	Integer o = y / x;
-	cout << o << endl;
-	y %= x;
-	cout << y << endl;
-	Integer a = gcd(y, i);
-	cout << a << endl;
+	// Integer class
+	//  Integer i = Integer();
+	Integer x = Integer("1551");
+	Integer y = Integer("0000");
+	x += y;
+	cout << x << endl;
+	//  Integer copy = Integer(x);
+	//  i += copy;
+	//  cout << i << endl; // 12
+	//  cout << y << endl;
+	//  Integer o = y / x;
+	//  cout << o << endl;
+	//  y %= x;
+	//  cout << y << endl;
+	//  Integer a = gcd(y, i);
+	//  cout << a << endl;
+	Rational c = Rational("1.101");
+	Rational d = Rational("1.101");
+	// c += d;
+	cout << (c > d) << endl;
 	return 0;
 }

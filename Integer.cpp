@@ -41,17 +41,17 @@ namespace cosc326
 	 *@desc: return absolute value of input
 	 *@param a: value needs to be return its abs
 	 */
+	/* Return absolute value of input */
 	Integer abs(const Integer &a)
 	{
 		std::string str = a.getValue();
-		char ch = str[0];
-		if (ch == '-' || ch == '+')
+		if (str[0] == '-' || str[0] == '+')
 		{
 			str = str.substr(1);
 		}
-		Integer result = Integer(str);
-		return result;
+		return Integer(str);
 	}
+
 	/*@Desc: overwrite local value by incoming value Integer i
 	 *@param i : incoming Integer
 	 *@return : local Integer value

@@ -40,8 +40,6 @@ namespace cosc326
 
 	private:
 		// Can add internal storage or methods here
-		mutable int value_int;
-		std::stringstream builder;
 		std::string value;
 	};
 
