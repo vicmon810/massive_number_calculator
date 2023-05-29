@@ -22,7 +22,7 @@ namespace cosc326
 
 	Rational::Rational(const Rational &r)
 	{
-		value = r.value;
+		value = r.getDecValue();
 	}
 
 	Rational::Rational(const Integer &a)
@@ -54,6 +54,7 @@ namespace cosc326
 
 	Rational &Rational::operator=(const Rational &r)
 	{
+		value = r.getDecValue();
 		return *this;
 	}
 
@@ -63,11 +64,13 @@ namespace cosc326
 
 	Rational Rational::operator+() const
 	{
-		return Rational(*this);
 	}
-
+	/*
+	 *@desc : using Integer operator to help me. spearer whole number and decimal number  and fill with 0 to calculate decimal number
+	 */
 	Rational &Rational::operator+=(const Rational &r)
 	{
+		cout << r.value << " " << value << endl;
 		std::string input = r.value;
 		std::string firstInput = input.substr(0, 1);
 		std::string firstLocal = value.substr(0, 1);
@@ -75,8 +78,8 @@ namespace cosc326
 		{ //+x + -y == x - y
 			Rational x = Rational(value.substr(1));
 			Rational y = Rational(input.substr(1));
-			// x -= y;
-			// value = x.getDecValue();
+			x -= y;
+			value = x.getDecValue();
 		}
 		else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
 		{ //-x + +y =  y - x
@@ -189,11 +192,174 @@ namespace cosc326
 
 	Rational &Rational::operator-=(const Rational &r)
 	{
+		std::string input = r.value;
+		std::string firstInput = input.substr(0, 1);
+		std::string firstLocal = value.substr(0, 1);
+		if (firstInput.compare("-") == 0 && firstLocal.compare("+") == 0)
+		{ //+x - -y == x + y
+			Rational x = Rational(value.substr(1));
+			Rational y = Rational(input.substr(1));
+			x += y;
+			value = x.getDecValue();
+		}
+		else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
+		{ //-x - +y =  -(x +y)
+			Rational x = Rational(value.substr(1));
+			Rational y = Rational(input.substr(1));
+			x += y;
+			value = "+" + x.getDecValue();
+		}
+		else if (firstInput.compare("+") == 0 && firstLocal.compare("+") == 0)
+		{ // +x - +y = x - y;
+			Rational x = Rational(value.substr(1));
+			Rational y = Rational(input.substr(1));
+			x -= y;
+			value = x.getDecValue();
+		}
+		else if (firstInput.compare("-") == 0 && firstLocal.compare("-") == 0)
+		{ // -x - -y = -(x + y)
+			Rational x = Rational(value.substr(1));
+			Rational y = Rational(input.substr(1));
+			x += y;
+			-x;
+			value = x.getDecValue();
+		}
+		else if (firstInput.compare("-") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
+		{ // x - -y = x + y
+			Rational x = Rational(value);
+			Rational y = Rational(input.substr(1));
+			x += y;
+			value = x.getDecValue();
+		}
+		else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
+		{ // x - +y = x + y
+			Rational x = Rational(value);
+			Rational y = Rational(input.substr(1));
+			x -= y;
+			value = x.getDecValue();
+		}
+		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
+		{ //-x + y = y - x
+			Rational x = Rational(value.substr(1));
+			Rational y = Rational(input);
+			y -= x;
+			value = y.getDecValue();
+		}
+		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
+		{ // + x + y = x + y
+			Rational x = Rational(value.substr(1));
+			Rational y = Rational(input);
+			x += y;
+			value = x.getDecValue();
+		}
+		else
+		{
+			string local = value;
+			string input = r.getDecValue();
+			string dot = ".";
+			string localWhole = local.substr(0, local.find(dot));
+			string inputWhole = input.substr(0, input.find(dot));
+			string localDec = local.substr(local.find(dot) + 1);
+			string inputDec = input.substr(input.find(dot) + 1);
+			if (localDec.size() < inputDec.size())
+			{
+				int diff = localDec.size() - inputDec.size();
+				inputDec.append(diff, '0');
+			}
+			if (localDec.size() > inputDec.size())
+			{
+				int diff = localDec.size() - inputDec.size();
+				inputDec.append(diff, '0');
+			}
+			Integer Dec1 = Integer(localDec);
+			Integer Dec2 = Integer(inputDec);
+			Dec1 -= Dec2; // Decimal number subtractions
+			+Dec1;		  // force the number still be the positive number.
+			Integer whole1 = Integer(localWhole);
+			Integer whole2 = Integer(inputWhole);
+			whole1 -= whole2;
+
+			value = whole1.getValue() + "." + Dec1.getValue();
+		}
 		return *this;
 	}
 
 	Rational &Rational::operator*=(const Rational &r)
 	{
+		std::string input = r.value;
+		char inputSign = input[0];
+		char localSign = value[0];
+		if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
+		{
+
+			std::string x = value.substr(1);
+			Rational X = Rational(x);
+			X *= r;
+			value = "-" + X.getDecValue();
+		}
+		else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
+		{
+
+			std::string y = input.substr(1);
+			Rational X = Rational(value);
+			Rational Y = Rational(y);
+			X *= Y;
+			value = "-" + X.getDecValue();
+		}
+		else if (inputSign == '-' && localSign == '-')
+		{
+
+			std::string x = value.substr(1);
+			std::string y = input.substr(1);
+			Rational X = Rational(x);
+			Rational Y = Rational(y);
+			X *= Y;
+			value = X.getDecValue();
+		}
+		else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
+		{
+
+			if (inputSign == '-')
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Rational X = Rational(x);
+				Rational Y = Rational(y);
+				X *= Y;
+				value = "-" + X.getDecValue();
+			}
+			else if (localSign == '-')
+			{
+				std::string x = value.substr(1);
+				std::string y = input.substr(1);
+				Rational X = Rational(x);
+				Rational Y = Rational(y);
+				X *= Y;
+				value = "-" + X.getDecValue();
+			}
+		}
+		else
+		{
+			string local = value;
+			string input = r.getDecValue();
+			string dot = ".";
+			size_t localDecLen = local.find(dot);
+			size_t inputDecLen = input.find(dot);
+			int decLen1 = local.size() - localDecLen - 1;
+			int decLen2 = input.size() - inputDecLen - 1;
+
+			int totalDecLen = decLen1 + decLen2;
+			local.erase(localDecLen, localDecLen);
+			input.erase(inputDecLen, inputDecLen);
+
+			Integer num1 = Integer(local);
+			Integer num2 = Integer(input);
+			num1 *= num2;
+			string holder = num1.getValue();
+			int dotSign = holder.size() - totalDecLen;
+			holder.insert(dotSign, ".");
+			value = holder;
+		}
 		return *this;
 	}
 
@@ -204,7 +370,10 @@ namespace cosc326
 
 	Rational operator+(const Rational &lhs, const Rational &rhs)
 	{
-		return lhs;
+		Rational result = lhs; // Make a copy of lhs
+		cout << result << endl;
+		result += rhs; // Add rhs to the copy
+		return result; // Return the result
 	}
 
 	Rational operator-(const Rational &lhs, const Rational &rhs)
@@ -346,5 +515,4 @@ namespace cosc326
 		else
 			return true;
 	}
-
 }

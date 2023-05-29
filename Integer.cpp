@@ -61,28 +61,29 @@ namespace cosc326
 		value = i.getValue();
 		return *this;
 	}
-	/*@Desc: decrease local value by 1
-	 *@return: local value -1;
+	/*@Desc: assign negative sign in the number if the number is negative already make it positive
 	 */
-	Integer Integer::operator-() const
+	Integer Integer::operator-()
 	{
-		Integer p = Integer("1");
-		Integer c = Integer(value);
-		c -= p;
-		std::string result = c.getValue();
-		return Integer(result);
+		if (value[0] == '-')
+			value.erase(0, 1);
+		else if (value[0] == '+')
+			value[0] = '-';
+		else
+			value.insert(0, 1, '-');
+
+		// Return modified Integer object
+		return *this;
 	}
 
 	/*@Desc: increase local value by 1
 	 *@return: local value +1;
 	 */
-	Integer Integer::operator+() const
+	Integer Integer::operator+()
 	{
-		Integer p = Integer("1");
-		Integer c = Integer(value);
-		c += p;
-		std::string result = c.getValue();
-		return Integer(result);
+		if (value[0] == '-')
+			value.erase(0, 1);
+		return *this;
 	}
 	/*@desc: accumulate local value by input i
 	 *@param:
@@ -226,7 +227,12 @@ namespace cosc326
 		{
 			Integer i = Integer(value);
 			Integer c = Integer(input);
-
+			if (value == "1" && input == "1")
+			{
+				cout << "Hello" << endl;
+				value = '0';
+				return *this;
+			}
 			if (c > i)
 			{ // ensure local value is alway bigger than input during calculation
 				swap(value, input);

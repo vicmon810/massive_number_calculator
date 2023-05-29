@@ -24,8 +24,8 @@ namespace cosc326
 		Integer &operator=(const Integer &i); // j = i;
 		friend Integer abs(const Integer &i); // return absolute value
 		// Unary operators
-		Integer operator-() const; // -j;
-		Integer operator+() const; // +j;
+		Integer operator-(); // -j;
+		Integer operator+(); // +j;
 
 		// Arithmetic assignment operators
 		Integer &operator+=(const Integer &i); // j += i;

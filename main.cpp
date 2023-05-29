@@ -16,9 +16,10 @@ int main()
 {
 	// Integer class
 	//  Integer i = Integer();
-	Integer x = Integer("1551");
-	Integer y = Integer("0000");
-	x += y;
+	Integer x = Integer("11001");
+	Integer y = Integer("29");
+	x *= y;
+
 	cout << x << endl;
 	//  Integer copy = Integer(x);
 	//  i += copy;
@@ -30,9 +31,14 @@ int main()
 	//  cout << y << endl;
 	//  Integer a = gcd(y, i);
 	//  cout << a << endl;
-	Rational c = Rational("1.101");
-	Rational d = Rational("1.101");
-	// c += d;
-	cout << (c > d) << endl;
+	Rational c = Rational("-1.1001");
+
+	Rational d = Rational("2.9");
+	c += d;
+	// cout << c << endl;
+	Rational f;
+	// f = c + d;
+	// cout << f << " " << (c + d) << endl;
+	// cout << (c > d) << endl;
 	return 0;
 }
