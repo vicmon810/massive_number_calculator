@@ -14,31 +14,38 @@ using namespace cosc326;
 
 int main()
 {
-	// Integer class
-	//  Integer i = Integer();
-	Integer x = Integer("11001");
-	Integer y = Integer("29");
-	x *= y;
+	// Integer Test constructor
+	// Integer zero = Integer();
+	// Integer one = Integer("1");
+	// Integer one_copy = Integer(one);
+	// Integer longNum = Integer("54646111123132131313213211231231234455456878764645689623132123484589751694312348645645456");
+	// cout << zero << " " << one << " " << one_copy << " " << longNum << endl;
+	// Unary operator testing
+	// +one;
+	// cout << one << endl;
+	// -one;
+	// cout << one << endl; //-1
+	// -one;
+	// cout << one << endl; // 1 again
+	// assign method
+	// Integer copy;
+	// copy = one;
+	// cout << copy << endl; // 1
 
+	// Arithmetic assignment operators
+	// Integer x = Integer("64");
+	// Integer y = Integer("46");
+	// x += y;//110
+	// x -= y;//18
+	// x *= y;//2944
+	// x / y;//1 NEED FIXED
+	Integer x = Integer("+64");
+	Integer y = Integer("46");
+	// x += y; // 110
+	x -= y; // 18
+	// x *= y;//2944
+	// x / y;//1 NEED FIXED
 	cout << x << endl;
-	//  Integer copy = Integer(x);
-	//  i += copy;
-	//  cout << i << endl; // 12
-	//  cout << y << endl;
-	//  Integer o = y / x;
-	//  cout << o << endl;
-	//  y %= x;
-	//  cout << y << endl;
-	//  Integer a = gcd(y, i);
-	//  cout << a << endl;
-	Rational c = Rational("-1.1001");
 
-	Rational d = Rational("2.9");
-	c += d;
-	// cout << c << endl;
-	Rational f;
-	// f = c + d;
-	// cout << f << " " << (c + d) << endl;
-	// cout << (c > d) << endl;
 	return 0;
 }

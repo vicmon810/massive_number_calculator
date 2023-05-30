@@ -17,7 +17,7 @@ namespace cosc326
 		Integer();					   // Integer i;
 		Integer(const Integer &i);	   // Integer j(i);
 		Integer(const std::string &s); // Integer k("123");
-
+		// Destructor declaration
 		~Integer();
 		std::string getValue() const;
 		void setValue(std::string &s);		  // setter value

@@ -30,8 +30,10 @@ namespace cosc326
 		value = a.getValue();
 	}
 
-	Rational::Rational(const Integer &a, const Integer &b)
+	Rational::Rational(const Integer &a, const Integer &b) // 35/40 = 7/8 ; 4/2 = 2
 	{
+		Integer factor = gcd(a, b);
+		cout << factor << endl;
 	}
 
 	Rational::Rational(const Integer &a, const Integer &b, const Integer &c)
@@ -70,7 +72,6 @@ namespace cosc326
 	 */
 	Rational &Rational::operator+=(const Rational &r)
 	{
-		cout << r.value << " " << value << endl;
 		std::string input = r.value;
 		std::string firstInput = input.substr(0, 1);
 		std::string firstLocal = value.substr(0, 1);
@@ -106,7 +107,9 @@ namespace cosc326
 		{ // x + -y = x - y
 			Rational x = Rational(value);
 			Rational y = Rational(input.substr(1));
+
 			x -= y;
+
 			value = x.getDecValue();
 		}
 		else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
@@ -120,6 +123,7 @@ namespace cosc326
 		{ //-x + y = y - x
 			Rational x = Rational(value.substr(1));
 			Rational y = Rational(input);
+
 			y -= x;
 			value = y.getDecValue();
 		}
@@ -139,7 +143,6 @@ namespace cosc326
 			Integer Decimal_Y;
 			size_t localIndex = local.find(dot);
 			size_t inputIndex = input.find(dot);
-			cout << localIndex << inputIndex << endl;
 			string localWholeNum = local.substr(0, localIndex);
 			string inputWholeNum = input.substr(0, inputIndex);
 			string localDecimal = local.substr(localIndex + 1);
@@ -172,7 +175,8 @@ namespace cosc326
 				Decimal_X += Decimal_Y;
 			}
 			string decHolder = Decimal_X.getValue();
-			if (decHolder.size() > inputDecLen || decHolder.size() > localDecLen)
+			int maxLen = std::max(inputDecLen, localDecLen);
+			if (decHolder.size() > maxLen - 1)
 			{
 				Integer addOne = Integer("1");
 				localWhole += addOne;
@@ -239,11 +243,11 @@ namespace cosc326
 			value = x.getDecValue();
 		}
 		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
-		{ //-x + y = y - x
+		{ //-x - y = y + x
 			Rational x = Rational(value.substr(1));
 			Rational y = Rational(input);
-			y -= x;
-			value = y.getDecValue();
+			y += x;
+			value = "-" + y.getDecValue();
 		}
 		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
 		{ // + x + y = x + y
@@ -256,30 +260,77 @@ namespace cosc326
 		{
 			string local = value;
 			string input = r.getDecValue();
+			cout << local << " teesse " << input << endl;
 			string dot = ".";
 			string localWhole = local.substr(0, local.find(dot));
 			string inputWhole = input.substr(0, input.find(dot));
 			string localDec = local.substr(local.find(dot) + 1);
 			string inputDec = input.substr(input.find(dot) + 1);
+			Integer x, y, decResult;
 			if (localDec.size() < inputDec.size())
 			{
-				int diff = localDec.size() - inputDec.size();
-				inputDec.append(diff, '0');
+				int diff = inputDec.size() - localDec.size();
+				localDec.append(diff, '0');
+				x = Integer(localDec);
+				y = Integer(inputDec);
+
+				if (localDec[0] > inputDec[0])
+				{
+
+					x -= y;
+					decResult = x;
+				}
+				else
+				{
+
+					y -= x;
+					decResult = y;
+				}
 			}
 			if (localDec.size() > inputDec.size())
 			{
 				int diff = localDec.size() - inputDec.size();
 				inputDec.append(diff, '0');
+				x = Integer(localDec);
+				y = Integer(inputDec);
+
+				if (localDec[0] > inputDec[0])
+				{
+
+					x -= y;
+					decResult = x;
+				}
+				else
+				{
+
+					y -= x;
+					decResult = y;
+				}
 			}
-			Integer Dec1 = Integer(localDec);
-			Integer Dec2 = Integer(inputDec);
-			Dec1 -= Dec2; // Decimal number subtractions
-			+Dec1;		  // force the number still be the positive number.
+			if (localDec.size() == inputDec.size())
+			{
+				x = Integer(localDec);
+				y = Integer(inputDec);
+
+				if (localDec[0] > inputDec[0])
+				{
+
+					x -= y;
+					decResult = x;
+				}
+				else
+				{
+
+					y -= x;
+					decResult = y;
+				}
+			}
+
 			Integer whole1 = Integer(localWhole);
 			Integer whole2 = Integer(inputWhole);
 			whole1 -= whole2;
 
-			value = whole1.getValue() + "." + Dec1.getValue();
+			value = whole1.getValue() + "." + decResult.getValue();
 		}
 		return *this;
 	}
@@ -359,6 +410,12 @@ namespace cosc326
 			int dotSign = holder.size() - totalDecLen;
 			holder.insert(dotSign, ".");
 			value = holder;
+			size_t index = value.size() - 1;
+			while (value[index - 1] == '0')
+			{
+				index--;
+				value = value.substr(0, index);
+			}
 		}
 		return *this;
 	}
@@ -371,19 +428,23 @@ namespace cosc326
 	Rational operator+(const Rational &lhs, const Rational &rhs)
 	{
 		Rational result = lhs; // Make a copy of lhs
-		cout << result << endl;
+
 		result += rhs; // Add rhs to the copy
 		return result; // Return the result
 	}
 
 	Rational operator-(const Rational &lhs, const Rational &rhs)
 	{
-		return lhs;
+		Rational result = lhs;
+		result -= rhs;
+		return result;
 	}
 
 	Rational operator*(const Rational &lhs, const Rational &rhs)
 	{
-		return lhs;
+		Rational result = lhs;
+		result *= rhs;
+		return result;
 	}
 
 	Rational operator/(const Rational &lhs, const Rational &rhs)
@@ -457,6 +518,7 @@ namespace cosc326
 
 	bool operator>(const Rational &lhs, const Rational &rhs)
 	{ // reverse < operator
+
 		if (lhs < rhs || lhs == rhs)
 			return false;
 		else

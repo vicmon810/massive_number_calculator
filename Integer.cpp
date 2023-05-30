@@ -225,22 +225,23 @@ namespace cosc326
 		}
 		else
 		{
-			Integer i = Integer(value);
-			Integer c = Integer(input);
-			if (value == "1" && input == "1")
+			Integer local = Integer(value);
+			Integer Input = Integer(input);
+			if (value == input)
 			{
-				cout << "Hello" << endl;
 				value = '0';
 				return *this;
 			}
-			if (c > i)
+			if (local < Input)
 			{ // ensure local value is alway bigger than input during calculation
+				// cout << local << " NONONONONO " << Input << endl;
 				swap(value, input);
 				negative = true;
 			}
 			std::string result = "";
 			int inputLen = input.size(), localLen = value.size(); // lenght of input/local
 			int carry = 0;
+
 			reverse(value.begin(), value.end());
 			reverse(input.begin(), input.end());
 
@@ -276,8 +277,7 @@ namespace cosc326
 			result.erase(std::remove_if(result.begin(), result.end(), ::isspace), result.end()); // just in case there is unwanted space
 			reverse(result.begin(), result.end());
 			value = result;
-
-			if (value[0] == '0' || value[0] == ' ')
+			while (value[0] == '0' || value[0] == ' ')
 			{
 				value = value.substr(1);
 			}
@@ -643,219 +643,97 @@ namespace cosc326
 		return is;
 	}
 
-	bool operator<(const Integer &lhs, const Integer &rhs)
+	bool operator>(const Integer &lhs, const Integer &rhs)
 	{
+		size_t index = 0;
 		if (lhs == rhs)
-		{
 			return false;
-		}
+		string smaller = lhs.getValue();
+		string bigger = rhs.getValue();
+		if (smaller[0] == '+')
+			smaller = smaller.substr(1);
+		if (bigger[0] == '+')
+			bigger = bigger.substr(1);
 
-		std::string str1 = lhs.getValue();
-		std::string str2 = rhs.getValue();
-		int n1 = str1.size();
-		int n2 = str2.size();
-		char str1Sign = str1[0];
-		char str2Sign = str2[0];
-		if (str1Sign == str2Sign && (str1Sign == '-' || str1Sign == '+'))
-		{ // if the sign is same
-			Integer x = Integer(str1.substr(1));
-			Integer y = Integer(str2.substr(1));
-			if (str1Sign == '+')
-			{
-				return (x < y);
-			}
-			else
-			{
-				return (x > y);
-			}
-		}
-		else if (str1Sign == '+' && (str2Sign != '-' && str2Sign != '+'))
-		{
-			Integer x = Integer(str1.substr(1));
-			return (x < rhs);
-		}
-		else if (str1Sign == '-' && (str2Sign != '-' && str2Sign != '+'))
-		{ // lhs = negative  rhs = positive
+		if (smaller[0] == '-' && bigger[0] != '-')
 			return true;
-		}
-		else if ((str1Sign != '-' && str1Sign != '+') && str2Sign == '+')
-		{
-			Integer y = Integer(str2.substr(1));
-			return (lhs < y);
-		}
-		else if ((str1Sign != '-' && str1Sign != '+') && str2Sign == '-')
-		{
-			return false;
-		}
-		else if (str1Sign == '+' && str2Sign == '-')
-		{
-			return false;
-		}
-		else if (str1Sign == '-' && str2Sign == '+')
-		{
-			return true;
-		}
 
-		if (n1 > n2)
-		{
+		if (smaller[0] != '-' && bigger[0] == '-')
 			return false;
-		}
-		else if (n2 > n1)
-		{
+
+		if (smaller.size() > bigger.size())
 			return true;
-		}
-		else
+
+		if (smaller.size() < bigger.size())
+			return false;
+
+		if (smaller.size() == bigger.size())
 		{
-			for (int i = 0; i < n2; i++)
+
+			while (index < smaller.size())
 			{
-				int num1 = str1[i] - '0';
-				int num2 = str2[i] - '0';
-				if (num1 > num2)
-				{
-					return false;
-				}
+				if (smaller[index] > bigger[index])
+					return true;
+				index++;
 			}
 		}
 		return false;
 	}
 
-	bool operator>(const Integer &lhs, const Integer &rhs)
+	bool operator<(const Integer &lhs, const Integer &rhs)
 	{
-		if (lhs == rhs)
-		{
-			return false;
-		}
 
-		std::string str1 = lhs.getValue();
-		std::string str2 = rhs.getValue();
-		int n1 = str1.size();
-		int n2 = str2.size();
-		char str1Sign = str1[0];
-		char str2Sign = str2[0];
-		if (str1Sign == str2Sign && (str1Sign == '-' || str1Sign == '+'))
-		{ // if the sign is same
-			Integer x = Integer(str1.substr(1));
-			Integer y = Integer(str2.substr(1));
-			if (str1Sign == '+')
-			{
-				return (x > y);
-			}
-			else
-			{
-				return (x < y);
-			}
-		}
-		else if (str1Sign == '+' && (str2Sign != '-' && str2Sign != '+'))
-		{
-			Integer x = Integer(str1.substr(1));
-			return (x > rhs);
-		}
-		else if (str1Sign == '-' && (str2Sign != '-' && str2Sign != '+'))
-		{ // lhs = negative  rhs = positive
+		if (lhs > rhs || lhs == rhs)
 			return false;
-		}
-		else if ((str1Sign != '-' && str1Sign != '+') && str2Sign == '+')
-		{
-			Integer y = Integer(str2.substr(1));
-			return (lhs > y);
-		}
-		else if ((str1Sign != '-' && str1Sign != '+') && str2Sign == '-')
-		{
-			return true;
-		}
-		else if (str1Sign == '+' && str2Sign == '-')
-		{
-			return true;
-		}
-		else if (str1Sign == '-' && str2Sign == '+')
-		{
-			return false;
-		}
+
 		else
-		{
-			if (n1 > n2)
-			{
-
-				return true;
-			}
-			else if (n2 > n1)
-			{
-
-				return false;
-			}
-			else
-			{
-				for (int i = 0; i < n2; i++)
-				{
-					int num1 = str1[i] - '0';
-					int num2 = str2[i] - '0';
-					if (num1 > num2)
-					{
-						return true;
-					}
-				}
-			}
-		}
-		return false;
+			return true;
 	}
 
 	bool operator<=(const Integer &lhs, const Integer &rhs)
 	{
-		if (lhs == rhs)
+		if (lhs == rhs || lhs < rhs)
 			return true;
 		else
-			return (lhs > rhs);
+			return false;
 	}
 
 	bool operator>=(const Integer &lhs, const Integer &rhs)
 	{
-		if (lhs == rhs)
+		if (lhs == rhs || lhs > rhs)
 			return true;
 		else
-			return (lhs > rhs);
+			return false;
 	}
 
 	bool operator==(const Integer &lhs, const Integer &rhs)
 	{
-		std::string str1 = lhs.getValue();
-		std::string str2 = rhs.getValue();
-		int n1 = str1.size(),
-			n2 = str2.size(), sum1 = 0, sum2 = 0;
-		if ((str1[0] == '+' && str2[0] != '-') || (str1[0] != '-' && str2[0] == '+'))
+		string str1 = lhs.getValue();
+		string str2 = rhs.getValue();
+		if (str1[0] == '+')
+			str1 = str1.substr(1);
+		if (str2[0] == '+')
+			str2 = str2.substr(1);
+
+		int str1Len = str1.size(), str2Len = str2.size();
+		if (str1[0] == str2[0] && str1Len == str2Len)
 		{
-			if (str1[0] == '+')
+			int index = 0;
+			while (index < str1Len)
 			{
-				Integer x = Integer(str1.substr(1));
-				return (x == rhs);
+				if (str1[index] == str2[index])
+					index++;
+				else
+					return false;
 			}
-			if (str2[0] == '+')
-			{
-				Integer y = Integer(str2.substr(1));
-				return (lhs == y);
-			}
-		}
-		if (str1[0] != str2[0])
-		{
-			return false;
+			if (index == str1Len)
+				return true;
 		}
 		else
 		{
-			if (n1 != n2)
-			{
-				return false;
-			}
-			else
-			{
-				int index = 0;
-				while (str1[index] == str2[index])
-				{
-					index++;
-					if (index == n1)
-						return true;
-				}
-			}
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	bool operator!=(const Integer &lhs, const Integer &rhs)
@@ -869,20 +747,24 @@ namespace cosc326
 	{
 		Integer n1 = abs(a);
 		Integer n2 = abs(b);
-
+		cout << n1 << " " << n2 << endl;
+		int index = 0;
+		if (a.getValue() == "0")
+			return n2;
+		if (b.getValue() == "0")
+			return n1;
+		if (a.getValue() == "0" && b.getValue() == a.getValue())
+			return n1;
 		while (n1 != n2)
 		{
 			if (n1 > n2)
 			{
-
 				n1 -= n2;
 			}
 			else
 			{
-
 				n2 -= n1;
 			}
-			// break;
 		}
 		return n1;
 	}
