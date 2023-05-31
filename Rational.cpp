@@ -94,13 +94,42 @@ namespace cosc326
 	 */
 	Rational &Rational::operator+=(const Rational &r)
 	{
+		Integer new_demominators;
+		Rational simply_input;
+		Integer resultNum;
 		if (denominators != r.denominators)
 		{
-			Rational simply_input = Rational(simply(r));
-			cout << simply_input << endl;
-			Integer new_demominators;
+			simply_input = Rational(simply(r));
+
+			new_demominators = simply_input.denominators * denominators;
+			Integer new_input_numerator = simply_input.numerator * numerator;
+			numerator *= simply_input.denominators;
+			resultNum = new_input_numerator + numerator;
+		}
+		else
+		{
+			new_demominators = denominators;
 		}
 
+		Rational result = Rational(resultNum, new_demominators);
+		Rational final = simply(result);
+
+		if (final.numerator > final.denominators)
+		{
+			wholeNum += (final.numerator / final.denominators);
+			numerator = final.numerator % final.denominators;
+		}
+		else
+		{
+			wholeNum = final.wholeNum;
+			numerator = final.numerator;
+		}
+		denominators = final.denominators;
+
+		if (wholeNum.getValue() != "0")
+			value = wholeNum.getValue() + "." + numerator.getValue() + "/" + denominators.getValue();
+		else
+			value = numerator.getValue() + "/" + denominators.getValue();
 		return *this;
 	}
 

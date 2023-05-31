@@ -88,5 +88,6 @@ int main()
 
 	// cout << ab << " " << abc << " " << copy << endl;
 	ab += ac;
+	cout << ab << endl;
 	return 0;
 }
