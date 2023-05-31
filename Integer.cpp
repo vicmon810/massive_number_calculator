@@ -196,7 +196,7 @@ namespace cosc326
 
 		if (firstInput == "-" && firstLocal != "-")
 		{ // +x - -y == x + y
-			Integer x = Integer(value.substr(1));
+			Integer x = Integer(value);
 			Integer y = Integer(input.substr(1));
 			x += y;
 			value = x.getValue();
@@ -212,16 +212,45 @@ namespace cosc326
 		{ // +x - +y = x - y;
 			Integer x = Integer(value.substr(1));
 			Integer y = Integer(input.substr(1));
-
+			cout << "cou2312t " << endl;
 			x -= y;
 			value = x.getValue();
 		}
 		else if (firstInput == "-" && firstLocal == "-")
-		{ // -x - -y = y - x
+		{ // -x - -y =  - x + y
+			cout << "cout111 " << endl;
 			Integer x = Integer(value.substr(1));
 			Integer y = Integer(input.substr(1));
-			y -= x;
-			value = y.getValue();
+			x += y;
+			value = "-" + x.getValue();
+		}
+		else if (firstInput == "-")
+		{ // x - -y ==  x + y
+			cout << "cout " << endl;
+			Integer x = Integer(value);
+			Integer y = Integer(input.substr(1));
+			x += y;
+			value = x.getValue();
+		}
+		else if (firstLocal == "-")
+		{ // -x - y = -1(x + y)
+			Integer x = Integer(value.substr(1));
+
+			x += i;
+			value = "-" + x.getValue();
+		}
+		else if (firstInput == "+")
+		{
+			Integer x = Integer(value);
+			Integer y = Integer(input.substr(1));
+			x -= y;
+			value = x.getValue();
+		}
+		else if (firstLocal == "+")
+		{
+			Integer x = Integer(value.substr(1));
+			x -= i;
+			value = x.getValue();
 		}
 		else
 		{
@@ -241,7 +270,6 @@ namespace cosc326
 			std::string result = "";
 			int inputLen = input.size(), localLen = value.size(); // lenght of input/local
 			int carry = 0;
-
 			reverse(value.begin(), value.end());
 			reverse(input.begin(), input.end());
 
@@ -397,6 +425,13 @@ namespace cosc326
 	Integer &Integer::operator/=(const Integer &i)
 	{
 		Integer f = Integer(value);
+		if (f == i)
+		{
+			cout << "here" << value << endl;
+			value = "1";
+			cout << value << endl;
+			return *this;
+		}
 		Integer p = abs(f);
 		Integer l = abs(i);
 		if (l > p)
@@ -415,7 +450,6 @@ namespace cosc326
 
 			if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
 			{
-
 				std::string x = value.substr(1);
 				Integer X = Integer(x);
 				X /= i;
@@ -423,7 +457,6 @@ namespace cosc326
 			}
 			else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
 			{
-
 				std::string y = input.substr(1);
 				Integer X = Integer(value);
 				Integer Y = Integer(y);
@@ -432,7 +465,6 @@ namespace cosc326
 			}
 			else if (inputSign == '-' && localSign == '-')
 			{
-
 				std::string x = value.substr(1);
 				std::string y = input.substr(1);
 				Integer X = Integer(x);
@@ -442,10 +474,8 @@ namespace cosc326
 			}
 			else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
 			{
-
 				if (inputSign == '-')
 				{
-
 					std::string x = value.substr(1);
 					std::string y = input.substr(1);
 					Integer X = Integer(x);
@@ -455,7 +485,6 @@ namespace cosc326
 				}
 				else if (localSign == '-')
 				{
-
 					std::string x = value.substr(1);
 					std::string y = input.substr(1);
 					Integer X = Integer(x);
@@ -465,7 +494,6 @@ namespace cosc326
 				}
 				else
 				{
-
 					std::string x = value.substr(1);
 					std::string y = input.substr(1);
 					Integer X = Integer(x);
@@ -476,42 +504,40 @@ namespace cosc326
 			}
 			else
 			{
-				std::string result;
-				int divider = std::stoll(i.value);
-				std::string::size_type index = 0;
-				int dividend = value[index] - '0';
+				int index = 0;
+				Integer zero = Integer("0");
+				Integer remainder;
+				Integer dividend = Integer(value);
+				Integer divider = Integer(i.value);
 				while (dividend >= divider)
 				{
-					dividend = dividend * 10 + (value[++index] - '0');
+					dividend -= divider;
+					index++;
 				}
-				while (index < value.size())
-				{
-					result += (dividend / divider) + '0';
-					dividend = (dividend % divider) * 10 + value[++index] - '0';
-				}
-				if (result.empty())
-				{
-					result = "0";
-				}
-				while (!result.empty() && result[0] == '0')
-				{
-					result = result.substr(1);
-				}
-				value = result;
+				// cout << dividend << endl;
+				// cout << index << endl;
+				value = std::to_string(index);
 			}
 		}
 		return *this;
 	}
-
 	/*remain local value by input i */
 	Integer &Integer::operator%=(const Integer &i)
 	{
+		Integer f = Integer(value);
+
+		if (f == i)
+		{
+			value = "0";
+			return *this;
+		}
+
 		std::string input = i.value;
 		char inputSign = input[0];
 		char localSign = value[0];
+
 		if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
 		{
-
 			std::string x = value.substr(1);
 			Integer X = Integer(x);
 			X %= i;
@@ -519,7 +545,6 @@ namespace cosc326
 		}
 		else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
 		{
-
 			std::string y = input.substr(1);
 			Integer X = Integer(value);
 			Integer Y = Integer(y);
@@ -528,7 +553,6 @@ namespace cosc326
 		}
 		else if (inputSign == '-' && localSign == '-')
 		{
-
 			std::string x = value.substr(1);
 			std::string y = input.substr(1);
 			Integer X = Integer(x);
@@ -538,7 +562,6 @@ namespace cosc326
 		}
 		else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
 		{
-
 			if (inputSign == '-')
 			{
 				std::string x = value.substr(1);
@@ -569,30 +592,27 @@ namespace cosc326
 		}
 		else
 		{
-			Integer A = Integer(value);
-			if (i > A)
+			// a/b = r
+			// r *b >= a
+			//  r = {0 ......a}
+			// shortest way to find r will be quickest solution
+			int index = 0;
+			Integer zero = Integer("0");
+			Integer remainder;
+			Integer dividend = Integer(value);
+			Integer divider = Integer(i.value);
+			while (dividend >= divider)
 			{
-				return *this;
+				dividend -= divider;
+				index++;
 			}
-			if (i.value == "0")
-			{
-				value = "0";
-			}
-			// A/i = q R r
-			// q * i  + r = A
-			// r =  A - (i* q)
-			Integer q = A / i;
-			Integer r = A - (i * q);
-			std::string result;
-			result = r.getValue();
-			while (result[0] == '0')
-			{
-				result = result.substr(1);
-			}
-			value = result;
+
+			value = dividend.getValue();
 		}
+
 		return *this;
 	}
+
 	/*return sum ot lhs and rhs return it as a Integer*/
 	Integer operator+(const Integer &lhs, const Integer &rhs)
 	{
@@ -645,57 +665,131 @@ namespace cosc326
 
 	bool operator>(const Integer &lhs, const Integer &rhs)
 	{
-		size_t index = 0;
-		if (lhs == rhs)
-			return false;
-		string smaller = lhs.getValue();
-		string bigger = rhs.getValue();
+		std::string smaller = lhs.getValue();
+		std::string bigger = rhs.getValue();
+
+		// Remove the sign symbol (+/-) for comparison
 		if (smaller[0] == '+')
 			smaller = smaller.substr(1);
 		if (bigger[0] == '+')
 			bigger = bigger.substr(1);
 
-		if (smaller[0] == '-' && bigger[0] != '-')
+		// Check if either number is negative
+		bool isSmallerNegative = (lhs.getValue()[0] == '-');
+		bool isBiggerNegative = (rhs.getValue()[0] == '-');
+
+		// Handle the case where one number is negative and the other is positive
+		if (isSmallerNegative && !isBiggerNegative)
+			return false;
+		if (!isSmallerNegative && isBiggerNegative)
 			return true;
 
-		if (smaller[0] != '-' && bigger[0] == '-')
-			return false;
+		// Handle the case where both numbers are negative
+		if (isSmallerNegative && isBiggerNegative)
+		{
+			// If the number of digits is different, the one with more digits is smaller
+			if (smaller.size() < bigger.size())
+				return true;
+			if (smaller.size() > bigger.size())
+				return false;
 
+			// If the number of digits is the same, compare digit by digit in reverse order
+			for (int i = smaller.size() - 1; i >= 1; i--)
+			{
+				if (smaller[i] < bigger[i])
+					return true;
+				if (smaller[i] > bigger[i])
+					return false;
+			}
+
+			// The numbers are equal
+			return false;
+		}
+
+		// Handle the case where both numbers are positive
 		if (smaller.size() > bigger.size())
 			return true;
-
 		if (smaller.size() < bigger.size())
 			return false;
 
-		if (smaller.size() == bigger.size())
+		// If the number of digits is the same, compare digit by digit in forward order
+		for (size_t i = 0; i < smaller.size(); i++)
 		{
-
-			while (index < smaller.size())
-			{
-				if (smaller[index] > bigger[index])
-					return true;
-				index++;
-			}
+			if (smaller[i] > bigger[i])
+				return true;
+			if (smaller[i] < bigger[i])
+				return false;
 		}
+
+		// The numbers are equal
 		return false;
 	}
 
 	bool operator<(const Integer &lhs, const Integer &rhs)
 	{
-
-		if (lhs > rhs || lhs == rhs)
-			return false;
-
-		else
-			return true;
+		return rhs > lhs;
 	}
 
 	bool operator<=(const Integer &lhs, const Integer &rhs)
 	{
-		if (lhs == rhs || lhs < rhs)
+		string str1 = lhs.getValue();
+		string str2 = rhs.getValue();
+
+		// Remove the sign symbol (+/-) for comparison
+		if (str1[0] == '+')
+			str1 = str1.substr(1);
+		if (str2[0] == '+')
+			str2 = str2.substr(1);
+
+		// Check if either number is negative
+		bool isStr1Negative = (lhs.getValue()[0] == '-');
+		bool isStr2Negative = (rhs.getValue()[0] == '-');
+
+		// Handle the case where one number is negative and the other is positive
+		if (isStr1Negative && !isStr2Negative)
 			return true;
-		else
+		if (!isStr1Negative && isStr2Negative)
 			return false;
+
+		// Handle the case where both numbers are negative
+		if (isStr1Negative && isStr2Negative)
+		{
+			// If the number of digits is different, the one with more digits is smaller
+			if (str1.size() < str2.size())
+				return true;
+			if (str1.size() > str2.size())
+				return false;
+
+			// If the number of digits is the same, compare digit by digit in reverse order
+			for (int i = str1.size() - 1; i >= 0; i--)
+			{
+				if (str1[i] < str2[i])
+					return true;
+				if (str1[i] > str2[i])
+					return false;
+			}
+
+			// The numbers are equal
+			return true;
+		}
+
+		// Handle the case where both numbers are positive
+		if (str1.size() < str2.size())
+			return true;
+		if (str1.size() > str2.size())
+			return false;
+
+		// If the number of digits is the same, compare digit by digit in forward order
+		for (size_t i = 0; i < str1.size(); i++)
+		{
+			if (str1[i] < str2[i])
+				return true;
+			if (str1[i] > str2[i])
+				return false;
+		}
+
+		// The numbers are equal
+		return true;
 	}
 
 	bool operator>=(const Integer &lhs, const Integer &rhs)
@@ -710,13 +804,17 @@ namespace cosc326
 	{
 		string str1 = lhs.getValue();
 		string str2 = rhs.getValue();
+
+		// Remove the sign symbol (+/-) for comparison
 		if (str1[0] == '+')
 			str1 = str1.substr(1);
 		if (str2[0] == '+')
 			str2 = str2.substr(1);
 
-		int str1Len = str1.size(), str2Len = str2.size();
-		if (str1[0] == str2[0] && str1Len == str2Len)
+		int str1Len = str1.size();
+		int str2Len = str2.size();
+
+		if (str1Len == str2Len)
 		{
 			int index = 0;
 			while (index < str1Len)
@@ -726,14 +824,12 @@ namespace cosc326
 				else
 					return false;
 			}
-			if (index == str1Len)
-				return true;
+			return true;
 		}
 		else
 		{
 			return false;
 		}
-		return true;
 	}
 
 	bool operator!=(const Integer &lhs, const Integer &rhs)
@@ -747,24 +843,17 @@ namespace cosc326
 	{
 		Integer n1 = abs(a);
 		Integer n2 = abs(b);
-		cout << n1 << " " << n2 << endl;
-		int index = 0;
 		if (a.getValue() == "0")
 			return n2;
 		if (b.getValue() == "0")
 			return n1;
-		if (a.getValue() == "0" && b.getValue() == a.getValue())
-			return n1;
-		while (n1 != n2)
+		Integer zero = Integer("0");
+		while (n2 != zero)
 		{
-			if (n1 > n2)
-			{
-				n1 -= n2;
-			}
-			else
-			{
-				n2 -= n1;
-			}
+			Integer temp = n2;
+			n2 = n1 % n2;
+			n1 = temp;
+			// cout << n1 << " " << n2 << " " << temp << endl;
 		}
 		return n1;
 	}

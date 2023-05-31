@@ -12,7 +12,7 @@ namespace cosc326
 
 	Rational::Rational()
 	{
-		value = "0.0";
+		value = "0";
 	}
 
 	Rational::Rational(const std::string &str)
@@ -22,27 +22,47 @@ namespace cosc326
 
 	Rational::Rational(const Rational &r)
 	{
-		value = r.getDecValue();
+		value = r.value;
 	}
 
 	Rational::Rational(const Integer &a)
-	{
+	{ // whole number
 		value = a.getValue();
 	}
 
 	Rational::Rational(const Integer &a, const Integer &b) // 35/40 = 7/8 ; 4/2 = 2
-	{
-		Integer factor = gcd(a, b);
-		cout << factor << endl;
+	{													   // numerator == a; denominators == b
+		numerator = a;
+		denominators = b;
+		if (a == b)
+			value = "1";
+
+		value = a.getValue() + "/" + b.getValue();
 	}
 
 	Rational::Rational(const Integer &a, const Integer &b, const Integer &c)
 	{
+		wholeNum = a;
+		numerator = b;
+		denominators = c;
+		value = a.getValue() + "." + b.getValue() + "/" + c.getValue();
 	}
 
 	Rational::~Rational()
 	{
 	}
+
+	Rational Rational::simply(const Rational &a)
+	{
+
+		Integer divider = gcd(a.numerator, a.denominators);
+		Integer new__numerator = a.numerator / divider;
+		Integer new__denominator = a.denominators / divider;
+		Rational result = Rational(new__numerator, new__denominator);
+		// cout << result << endl;
+		return result;
+	}
+
 	// Getter method
 	std::string Rational::getDecValue() const
 	{
@@ -56,7 +76,9 @@ namespace cosc326
 
 	Rational &Rational::operator=(const Rational &r)
 	{
-		value = r.getDecValue();
+		denominators = r.denominators;
+		numerator = r.numerator;
+		value = r.value;
 		return *this;
 	}
 
@@ -72,351 +94,23 @@ namespace cosc326
 	 */
 	Rational &Rational::operator+=(const Rational &r)
 	{
-		std::string input = r.value;
-		std::string firstInput = input.substr(0, 1);
-		std::string firstLocal = value.substr(0, 1);
-		if (firstInput.compare("-") == 0 && firstLocal.compare("+") == 0)
-		{ //+x + -y == x - y
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input.substr(1));
-			x -= y;
-			value = x.getDecValue();
-		}
-		else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
-		{ //-x + +y =  y - x
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input.substr(1));
-			y -= x;
-			value = y.getDecValue();
-		}
-		else if (firstInput.compare("+") == 0 && firstLocal.compare("+") == 0)
-		{ // +x + +y = x + y;
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input.substr(1));
-			x += y;
-			value = x.getDecValue();
-		}
-		else if (firstInput.compare("-") == 0 && firstLocal.compare("-") == 0)
-		{ // -x + -y = -(x + y)
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input.substr(1));
-			x += y;
-			value = "-" + x.getDecValue();
-		}
-		else if (firstInput.compare("-") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-		{ // x + -y = x - y
-			Rational x = Rational(value);
-			Rational y = Rational(input.substr(1));
-
-			x -= y;
-
-			value = x.getDecValue();
-		}
-		else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-		{ // x + +y = x + y
-			Rational x = Rational(value);
-			Rational y = Rational(input.substr(1));
-			x += y;
-			value = x.getDecValue();
-		}
-		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
-		{ //-x + y = y - x
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input);
-
-			y -= x;
-			value = y.getDecValue();
-		}
-		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
-		{ // + x + y = x + y
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input);
-			x += y;
-			value = x.getDecValue();
-		}
-		else
+		if (denominators != r.denominators)
 		{
-			string input = r.value;
-			string local = value;
-			string dot = ".";
-			Integer Decimal_X;
-			Integer Decimal_Y;
-			size_t localIndex = local.find(dot);
-			size_t inputIndex = input.find(dot);
-			string localWholeNum = local.substr(0, localIndex);
-			string inputWholeNum = input.substr(0, inputIndex);
-			string localDecimal = local.substr(localIndex + 1);
-			string inputDecimal = input.substr(inputIndex + 1);
-			Integer localWhole = Integer(localWholeNum);
-			Integer inputWhole = Integer(inputWholeNum);
-			localWhole += inputWhole;
-			int inputDecLen = input.size() - inputIndex;
-			int localDecLen = local.size() - localIndex;
-			if (inputDecLen > localDecLen)
-			{ // inputDecimal > localDecimal fill 0 with localDecimal
-				int diff = inputDecLen - localDecLen;
-				localDecimal.append(diff, '0');
-				Decimal_X = Integer(localDecimal);
-				Decimal_Y = Integer(inputDecimal);
-				Decimal_X += Decimal_Y;
-			}
-			else if (inputDecLen < localDecLen)
-			{
-				int diff = localDecLen - inputDecLen;
-				inputDecimal.append(diff, '0');
-				Decimal_X = Integer(localDecimal);
-				Decimal_Y = Integer(inputDecimal);
-				Decimal_X += Decimal_Y;
-			}
-			else
-			{
-				Decimal_X = Integer(localDecimal);
-				Decimal_Y = Integer(inputDecimal);
-				Decimal_X += Decimal_Y;
-			}
-			string decHolder = Decimal_X.getValue();
-			int maxLen = std::max(inputDecLen, localDecLen);
-			if (decHolder.size() > maxLen - 1)
-			{
-				Integer addOne = Integer("1");
-				localWhole += addOne;
-				decHolder = decHolder.substr(1);
-			}
-			string result = "";
-			string wholeHoler = localWhole.getValue();
-			if (decHolder.size() > 0)
-				result = wholeHoler + "." + decHolder;
-			else
-				result = wholeHoler + ".0";
-
-			value = result;
+			Rational simply_input = Rational(simply(r));
+			cout << simply_input << endl;
+			Integer new_demominators;
 		}
+
 		return *this;
 	}
 
 	Rational &Rational::operator-=(const Rational &r)
 	{
-		std::string input = r.value;
-		std::string firstInput = input.substr(0, 1);
-		std::string firstLocal = value.substr(0, 1);
-		if (firstInput.compare("-") == 0 && firstLocal.compare("+") == 0)
-		{ //+x - -y == x + y
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input.substr(1));
-			x += y;
-			value = x.getDecValue();
-		}
-		else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
-		{ //-x - +y =  -(x +y)
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input.substr(1));
-			x += y;
-			value = "+" + x.getDecValue();
-		}
-		else if (firstInput.compare("+") == 0 && firstLocal.compare("+") == 0)
-		{ // +x - +y = x - y;
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input.substr(1));
-			x -= y;
-			value = x.getDecValue();
-		}
-		else if (firstInput.compare("-") == 0 && firstLocal.compare("-") == 0)
-		{ // -x - -y = -(x + y)
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input.substr(1));
-			x += y;
-			-x;
-			value = x.getDecValue();
-		}
-		else if (firstInput.compare("-") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-		{ // x - -y = x + y
-			Rational x = Rational(value);
-			Rational y = Rational(input.substr(1));
-			x += y;
-			value = x.getDecValue();
-		}
-		else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-		{ // x - +y = x + y
-			Rational x = Rational(value);
-			Rational y = Rational(input.substr(1));
-			x -= y;
-			value = x.getDecValue();
-		}
-		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
-		{ //-x - y = y + x
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input);
-			y += x;
-			value = "-" + y.getDecValue();
-		}
-		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
-		{ // + x + y = x + y
-			Rational x = Rational(value.substr(1));
-			Rational y = Rational(input);
-			x += y;
-			value = x.getDecValue();
-		}
-		else
-		{
-			string local = value;
-			string input = r.getDecValue();
-			cout << local << " teesse " << input << endl;
-			string dot = ".";
-			string localWhole = local.substr(0, local.find(dot));
-			string inputWhole = input.substr(0, input.find(dot));
-			string localDec = local.substr(local.find(dot) + 1);
-			string inputDec = input.substr(input.find(dot) + 1);
-			Integer x, y, decResult;
-			if (localDec.size() < inputDec.size())
-			{
-				int diff = inputDec.size() - localDec.size();
-				localDec.append(diff, '0');
-				x = Integer(localDec);
-				y = Integer(inputDec);
-
-				if (localDec[0] > inputDec[0])
-				{
-
-					x -= y;
-					decResult = x;
-				}
-				else
-				{
-
-					y -= x;
-					decResult = y;
-				}
-			}
-			if (localDec.size() > inputDec.size())
-			{
-				int diff = localDec.size() - inputDec.size();
-				inputDec.append(diff, '0');
-				x = Integer(localDec);
-				y = Integer(inputDec);
-
-				if (localDec[0] > inputDec[0])
-				{
-
-					x -= y;
-					decResult = x;
-				}
-				else
-				{
-
-					y -= x;
-					decResult = y;
-				}
-			}
-			if (localDec.size() == inputDec.size())
-			{
-				x = Integer(localDec);
-				y = Integer(inputDec);
-
-				if (localDec[0] > inputDec[0])
-				{
-
-					x -= y;
-					decResult = x;
-				}
-				else
-				{
-
-					y -= x;
-					decResult = y;
-				}
-			}
-
-			Integer whole1 = Integer(localWhole);
-			Integer whole2 = Integer(inputWhole);
-			whole1 -= whole2;
-
-			value = whole1.getValue() + "." + decResult.getValue();
-		}
-		return *this;
 	}
 
 	Rational &Rational::operator*=(const Rational &r)
 	{
-		std::string input = r.value;
-		char inputSign = input[0];
-		char localSign = value[0];
-		if (localSign == '-' && (inputSign != '+' && inputSign != '-'))
-		{
 
-			std::string x = value.substr(1);
-			Rational X = Rational(x);
-			X *= r;
-			value = "-" + X.getDecValue();
-		}
-		else if (inputSign == '-' && (localSign != '-' && localSign != '+'))
-		{
-
-			std::string y = input.substr(1);
-			Rational X = Rational(value);
-			Rational Y = Rational(y);
-			X *= Y;
-			value = "-" + X.getDecValue();
-		}
-		else if (inputSign == '-' && localSign == '-')
-		{
-
-			std::string x = value.substr(1);
-			std::string y = input.substr(1);
-			Rational X = Rational(x);
-			Rational Y = Rational(y);
-			X *= Y;
-			value = X.getDecValue();
-		}
-		else if ((inputSign == '-' || inputSign == '+') && (localSign == '-' || localSign == '+'))
-		{
-
-			if (inputSign == '-')
-			{
-				std::string x = value.substr(1);
-				std::string y = input.substr(1);
-				Rational X = Rational(x);
-				Rational Y = Rational(y);
-				X *= Y;
-				value = "-" + X.getDecValue();
-			}
-			else if (localSign == '-')
-			{
-				std::string x = value.substr(1);
-				std::string y = input.substr(1);
-				Rational X = Rational(x);
-				Rational Y = Rational(y);
-				X *= Y;
-				value = "-" + X.getDecValue();
-			}
-		}
-		else
-		{
-			string local = value;
-			string input = r.getDecValue();
-			string dot = ".";
-			size_t localDecLen = local.find(dot);
-			size_t inputDecLen = input.find(dot);
-			int decLen1 = local.size() - localDecLen - 1;
-			int decLen2 = input.size() - inputDecLen - 1;
-
-			int totalDecLen = decLen1 + decLen2;
-			local.erase(localDecLen, localDecLen);
-			input.erase(inputDecLen, inputDecLen);
-
-			Integer num1 = Integer(local);
-			Integer num2 = Integer(input);
-			num1 *= num2;
-			string holder = num1.getValue();
-			int dotSign = holder.size() - totalDecLen;
-			holder.insert(dotSign, ".");
-			value = holder;
-			size_t index = value.size() - 1;
-			while (value[index - 1] == '0')
-			{
-				index--;
-				value = value.substr(0, index);
-			}
-		}
 		return *this;
 	}
 

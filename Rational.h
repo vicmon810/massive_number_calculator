@@ -31,6 +31,8 @@ namespace cosc326
 		Rational operator-() const; // -r;
 		Rational operator+() const; // +r;
 
+		Rational simply(const Rational &a); // simply  denominator and numerator
+
 		// Arithmetic assignment operators
 		Rational &operator+=(const Rational &r); // q += r;
 		Rational &operator-=(const Rational &r); // q -= r;
@@ -43,6 +45,9 @@ namespace cosc326
 
 	private:
 		// Can add internal storage or methods here
+		Integer denominators;
+		Integer numerator;
+		Integer wholeNum;
 		string value;
 	};
 
