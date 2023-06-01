@@ -144,16 +144,9 @@ namespace cosc326 {
 
 	Rational& Rational::operator*=(const Rational& r)
 	{
-		std::cout << "numerator: " << numerator << std::endl;
-    	std::cout << "denominator: " << denominators << std::endl;
-		std::cout << "numerator: " << r.numerator << std::endl;
-    	std::cout << "denominator: " << r.denominators << std::endl;
 		numerator *= r.numerator;
 		denominators *= r.denominators;
 		value = numerator.getValue() + "/" + denominators.getValue();
-		std::cout << "numerator post: " << numerator << std::endl;
-    	std::cout << "denominator post: " << denominators << std::endl;
-		std::cout << "Result: " << *this << std::endl;
 		return *this;
 	}
 
