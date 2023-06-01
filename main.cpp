@@ -1,95 +1,64 @@
-/*
-	Test main for Rational and Integer
-	// 1 = true
-	// 0 = false
-*/
-
 #include <iostream>
-using namespace std;
-
-#include "Integer.h"
 #include "Rational.h"
-
-using namespace cosc326;
-
+#include "Integer.h"
 int main()
 {
-	// Integer Test constructor
-	// Integer zero = Integer();
-	// Integer one = Integer("1");
-	// Integer one_copy = Integer(one);
-	// Integer longNum = Integer("54646111123132131313213211231231234455456878764645689623132123484589751694312348645645456");
-	// cout << zero << " " << one << " " << one_copy << " " << longNum << endl;
-	// Unary operator testing
-	// +one;
-	// cout << one << endl;
-	// -one;
-	// cout << one << endl; //-1
-	// -one;
-	// cout << one << endl; // 1 again
-	// assign method
-	// Integer copy;
-	// copy = one;
-	// cout << copy << endl; // 1
+	using namespace std;
+	using namespace cosc326;
+	// Create Integer objects using different constructors
+	Integer i1;
+	Integer i2("123");
+	Integer i3("-123");
+	Integer i4("+12");
+	Integer i5(i2);
+	Integer i6(gcd(i4, i2));
 
-	// Arithmetic assignment operators
-	// Integer x = Integer("64");
-	// Integer y = Integer("46");
-	// x += y;//110
-	// x -= y;//18
-	// x *= y;//2944
-	// x / y;//1 NEED FIXED
-	// Integer x = Integer("64");
-	// Integer y = Integer("46");
-	// x += y; // 110
-	// x -= y; // 18
-	// x *= y;//2944
-	// x / y;//1 NEED FIXED
-	// cout << x << endl;
-	// Integer z = Integer("29");
-	// Integer c = Integer("21");
-	// Integer sum;
-	// sum = z + c;
-	// sum = z - c;
-	// sum = z * c;
-	// cout
-	// 	<< (z > c) << endl;
-	// sum = z % c;
-	// cout << sum << " " << z << " " << c << endl;
-	// Integer bigger = Integer("100");
-	// Integer smaller = Integer("101");
-	// Integer addOne = Integer("1");
-	// Integer sum = smaller + addOne;
-	// bool equal = bigger == addOne;
-	// bool GE = bigger >= smaller;
-	// bool Bigger = bigger > smaller;	  // true
-	// bool Smaller = bigger < smaller;  // false
-	// bool unEqual = bigger != smaller; // true
-	// cout << Bigger << " " << Smaller << " " << unEqual << " " << GE << endl;
-	// Integer n1 = Integer("18446744073709551654");
-	// Integer("1844674407370955165");
-	// Integer n2 = Integer("645546454645464");
-	// Integer("66564444412134454645645645456456456456454564545454564545454545456456456456546456456456456456456456454564564564545454564564564564545645645645645645645645645645645645645645645645645645645645645456456456");
-	// n1 %= n2;
+	// Display the created Integer objects
+	cout << "i1: " << i1 << endl;
+	cout << "i2: " << i2 << endl;
+	cout << "i3: " << i3 << endl;
+	cout << "i4: " << i4 << endl;
+	cout << "i5: " << i5 << endl;
+	cout << "i6: " << i6 << endl;
+	// Perform arithmetic operations on Rational objects
+	Integer isum = i4 + i2;
+	Integer idifference = i3 - i4;
+	Integer iproduct = i4 * i3;
+	Integer iquotient = i4 / i5;
 
-	// cout << n1 << endl;
-	// Integer Gcd = gcd(n1, n2);
-	// cout << "gdc of " << n1 << " and " << n2 << ": " << Gcd << endl;
+	// Display the results
+	cout << "Sum: " << isum << endl;
+	cout << "Difference: " << idifference << endl;
+	cout << "Product: " << iproduct << endl;
+	cout << "Quotient: " << iquotient << endl;
+	cout << "GCD: " << i6 << endl;
+	// Create Rational objects using different constructors
+	Rational r1;										   // Default constructor
+	Rational r2("-3/7");								   // Constructor from string
+	Rational r3(Integer("5"));							   // Constructor from string
+	Rational r4(Integer("2"), Integer("3"));			   // Constructor from fraction
+	Rational r5(Integer("1"), Integer("2"), Integer("3")); // Constructor from mixed number
+	Rational r6(r2);									   // Copy constructor
 
-	// Rational
-	Integer a = Integer("12");
-	Integer b = Integer("-7");
-	Integer c = Integer("5");
-	a += b;
-	cout << a << endl;
-	// Rational ab = Rational(a, b);
-	// Rational abc = Rational(a, b, c);
-	// Rational ac = Rational(a, c);
-	// Rational copy = abc;
+	// Display the created Rational objects
+	cout << "r1: " << r1 << endl;
+	cout << "r2: " << r2 << endl;
+	cout << "r3: " << r3 << endl;
+	cout << "r4: " << r4 << endl;
+	cout << "r5: " << r5 << endl;
+	cout << "r6: " << r6 << endl;
 
-	// cout << ab << " " << abc << " " << copy << endl;
-	// cout << ac << endl;
-	// ab += abc;
-	// cout << ab << endl;
+	// Perform arithmetic operations on Rational objects
+	Rational sum = r4 + r2;
+	Rational difference = r3 - r4;
+	Rational product = r4 * r3;
+	Rational quotient = r4 / r5;
+
+	// Display the results
+	cout << "Sum: " << sum << endl;
+	cout << "Difference: " << difference << endl;
+	cout << "Product: " << product << endl;
+	cout << "Quotient: " << quotient << endl;
+
 	return 0;
 }

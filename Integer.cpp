@@ -90,100 +90,118 @@ namespace cosc326
 	 */
 	Integer &Integer::operator+=(const Integer &i)
 	{
-		std::string input = i.value;
-		std::string firstInput = input.substr(0, 1);
-		std::string firstLocal = value.substr(0, 1);
-		if (firstInput.compare("-") == 0 && firstLocal.compare("+") == 0)
-		{ //+x + -y == x - y
-			Integer x = Integer(value.substr(1));
-			Integer y = Integer(input.substr(1));
-			x -= y;
-			value = x.getValue();
-		}
-		else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
-		{ //-x + +y =  y - x
-			Integer x = Integer(value.substr(1));
-			Integer y = Integer(input.substr(1));
-			y -= x;
-			value = y.getValue();
-		}
-		else if (firstInput.compare("+") == 0 && firstLocal.compare("+") == 0)
-		{ // +x + +y = x + y;
-			Integer x = Integer(value.substr(1));
-			Integer y = Integer(input.substr(1));
-			x += y;
-			value = x.getValue();
-		}
-		else if (firstInput.compare("-") == 0 && firstLocal.compare("-") == 0)
-		{ // -x + -y = -(x + y)
-			Integer x = Integer(value.substr(1));
-			Integer y = Integer(input.substr(1));
-			x += y;
-			value = "-" + x.getValue();
-		}
-		else if (firstInput.compare("-") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-		{ // x + -y = x - y
-			Integer x = Integer(value);
-			Integer y = Integer(input.substr(1));
-			x -= y;
-			value = x.getValue();
-		}
-		else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-		{ // x + +y = x + y
-			Integer x = Integer(value);
-			Integer y = Integer(input.substr(1));
-			x += y;
-			value = x.getValue();
-		}
-		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
-		{ //-x + y = y - x
-			Integer x = Integer(value.substr(1));
-			Integer y = Integer(input);
-			y -= x;
-			value = y.getValue();
-		}
-		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
-		{ // + x + y = x + y
-			Integer x = Integer(value.substr(1));
-			Integer y = Integer(input);
-			x += y;
-			value = x.getValue();
-		}
-		else
-		{
-			// Handle non-sign input
-			int inputLen = input.length();
-			int localLen = value.length();
-			int min = std::min(inputLen, localLen);
-			int max = std::max(inputLen, localLen);
 
-			if (inputLen > localLen)
-			{
-				swap(input, value);
-			}
-			std::string sum = "";
-			int digitDiff = max - min;
-			int carry = 0;
-			int intSum;
-			for (int i = min - 1; i >= 0; i--)
-			{
-				intSum = (input[i] - '0') + (value[i + digitDiff] - '0') + carry;
-				sum.push_back(intSum % 10 + '0');
-				carry = intSum / 10;
-			}
-			for (int i = digitDiff - 1; i >= 0; i--)
-			{
-				intSum = (value[i] - '0') + carry;
-				sum.push_back(intSum % 10 + '0');
-				carry = intSum / 10;
-			}
-			if (carry)
-			{
-				sum.push_back(carry + '0');
-			}
-			reverse(sum.begin(), sum.end());
-			value = sum;
+		std::string input = i.value;
+		std::string &local = value;
+
+		bool negateResult = false;
+		bool negateInput = false;
+
+		if (input[0] == '-')
+		{
+			input = input.substr(1);
+			negateInput = true;
 		}
+
+		if (local[0] == '-')
+		{
+			local = local.substr(1);
+			negateResult = true;
+		}
+
+		if (input[0] == '+')
+
+			if (firstInput.compare("-") == 0 && firstLocal.compare("+") == 0)
+			{ //+x + -y == x - y
+				Integer x = Integer(value.substr(1));
+				Integer y = Integer(input.substr(1));
+				x -= y;
+				value = x.getValue();
+			}
+			else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
+			{ //-x + +y =  y - x
+				Integer x = Integer(value.substr(1));
+				Integer y = Integer(input.substr(1));
+				y -= x;
+				value = y.getValue();
+			}
+			else if (firstInput.compare("+") == 0 && firstLocal.compare("+") == 0)
+			{ // +x + +y = x + y;
+				Integer x = Integer(value.substr(1));
+				Integer y = Integer(input.substr(1));
+				x += y;
+				value = x.getValue();
+			}
+			else if (firstInput.compare("-") == 0 && firstLocal.compare("-") == 0)
+			{ // -x + -y = -(x + y)
+				Integer x = Integer(value.substr(1));
+				Integer y = Integer(input.substr(1));
+				x += y;
+				value = "-" + x.getValue();
+			}
+			else if (firstInput.compare("-") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
+			{ // x + -y = x - y
+				Integer x = Integer(value);
+				Integer y = Integer(input.substr(1));
+				x -= y;
+				value = x.getValue();
+			}
+			else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
+			{ // x + +y = x + y
+				Integer x = Integer(value);
+				Integer y = Integer(input.substr(1));
+				x += y;
+				value = x.getValue();
+			}
+			else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
+			{ //-x + y = y - x
+				Integer x = Integer(value.substr(1));
+				Integer y = Integer(input);
+				y -= x;
+				value = y.getValue();
+			}
+			else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
+			{ // + x + y = x + y
+				Integer x = Integer(value.substr(1));
+				Integer y = Integer(input);
+				x += y;
+				value = x.getValue();
+			}
+			else
+			{
+				// Handle non-sign input
+				int inputLen = input.length();
+				int localLen = value.length();
+				int min = std::min(inputLen, localLen);
+				int max = std::max(inputLen, localLen);
+
+				if (inputLen > localLen)
+				{
+					swap(input, value);
+				}
+				std::string sum = "";
+				int digitDiff = max - min;
+				int carry = 0;
+				int intSum;
+				for (int i = min - 1; i >= 0; i--)
+				{
+					intSum = (input[i] - '0') + (value[i + digitDiff] - '0') + carry;
+					sum.push_back(intSum % 10 + '0');
+					carry = intSum / 10;
+				}
+				for (int i = digitDiff - 1; i >= 0; i--)
+				{
+					intSum = (value[i] - '0') + carry;
+					sum.push_back(intSum % 10 + '0');
+					carry = intSum / 10;
+				}
+				if (carry)
+				{
+					sum.push_back(carry + '0');
+				}
+				reverse(sum.begin(), sum.end());
+				value = sum;
+			}
 		return *this;
 	}
 
