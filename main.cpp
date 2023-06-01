@@ -78,17 +78,18 @@ int main()
 
 	// Rational
 	Integer a = Integer("12");
-	Integer b = Integer("12");
-	Integer c = Integer("16");
-
-	Rational ab = Rational(a);
-	Rational abc = Rational(a, b, c);
-	Rational ac = Rational(a, c);
-	Rational copy = abc;
+	Integer b = Integer("-7");
+	Integer c = Integer("5");
+	a += b;
+	cout << a << endl;
+	// Rational ab = Rational(a, b);
+	// Rational abc = Rational(a, b, c);
+	// Rational ac = Rational(a, c);
+	// Rational copy = abc;
 
 	// cout << ab << " " << abc << " " << copy << endl;
-	cout << ac << endl;
-	ab += abc;
-	cout << ab << endl;
+	// cout << ac << endl;
+	// ab += abc;
+	// cout << ab << endl;
 	return 0;
 }

@@ -15,7 +15,7 @@ By revisiting and revitalizing this project, we aim to contribute to the computa
 
 ### Usage :
 In order to run this Integer calculation please compile Integer class first with command : `g++ -Wall -c Integer.cpp -o Integer.o` then compile main class with command `g++ -Wall main.cpp Integer.o -o main` finally enter command `./main` to run it.
-In order to run the Rational Calculation please compile Integer class first with command :`g++ -Wall -c Integer.cpp -o Integer.o`, then compile Rational class with command `g++ -Wall -c Rational.coo -o Rational.o`, lastly compile main class using command `g++ -Wall main.cpp  Integer.o Rational.o -o main`. After compile all class without any error message when using command `./main` to run this program. 
+In order to run the Rational Calculation please compile Integer class first with command :`g++ -Wall -c Integer.cpp -o Integer.o`, then compile Rational class with command `g++ -Wall -c Rational.cpp -o Rational.o`, lastly compile main class using command `g++ -Wall main.cpp  Integer.o Rational.o -o main`. After compile all class without any error message when using command `./main` to run this program. 
 
 
 ### Test Case :

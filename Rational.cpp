@@ -62,6 +62,14 @@ namespace cosc326
 		if (a == b)
 			value = "1";
 
+		if (b == Integer("1"))
+		{
+			wholeNum = numerator;
+			numerator = Integer();
+			denominators = Integer();
+			value = a.getValue();
+		}
+
 		value = a.getValue() + "/" + b.getValue();
 	}
 
@@ -84,18 +92,12 @@ namespace cosc326
 			Rational res = Rational();
 			return res;
 		}
-		else if (a.numerator.getValue() == a.denominators.getValue())
-		{
-			Rational res = Rational("1");
-			return res;
-		}
 		else
 		{
 			Integer divider = gcd(a.numerator, a.denominators);
 			Integer new__numerator = a.numerator / divider;
 			Integer new__denominator = a.denominators / divider;
 			Rational result = Rational(new__numerator, new__denominator);
-			// cout << result << endl;
 			return result;
 		}
 	}
@@ -149,7 +151,6 @@ namespace cosc326
 				wholeNum += simpled.wholeNum;
 				numerator += simpled.numerator;
 				denominators += simpled.denominators;
-
 				if (numerator > denominators)
 				{
 					Integer new_numer = numerator % denominators;
@@ -166,13 +167,67 @@ namespace cosc326
 				wholeNum += r.wholeNum;
 				cout << wholeNum << endl;
 				Rational simpled = simply(r);
-				cout << simpled.wholeNum << endl;
+				wholeNum += simpled.wholeNum;
+				numerator += simpled.numerator;
+				denominators += simpled.denominators;
+				if (numerator > denominators)
+				{
+					Integer new_numer = numerator % denominators;
+					Integer temp_whole = numerator / denominators;
+					wholeNum += temp_whole;
+					numerator = new_numer;
+				}
+				value = wholeNum.getValue() + "." + numerator.getValue() + "/" + denominators.getValue();
 			}
 		}
 		// Case : local = a/b
 		else if (wholeNum == Integer("0") && denominators != Integer("0"))
 		{
-			cout << "CCC" << endl;
+			// local copy
+			Rational copy = simply(Rational(numerator, denominators));
+			cout << copy << endl;
+			cout << "CCC " << (r.denominators == Integer("0")) << endl;
+			// case : r = A
+			if (r.wholeNum != Integer("0") && r.denominators == Integer("0"))
+			{
+				copy.wholeNum += r.wholeNum;
+				if (copy.numerator > copy.denominators)
+				{
+					copy.wholeNum += (copy.numerator / copy.denominators);
+					copy.numerator = copy.numerator % copy.denominators;
+				}
+				if (copy.denominators != Integer("0"))
+					value = copy.wholeNum.getValue() + "." + copy.numerator.getValue() + "/" + copy.denominators.getValue();
+				else
+					value = copy.wholeNum.getValue();
+			}
+			// case : r = a/b
+			else if (r.wholeNum == Integer("0") && r.denominators != Integer("0"))
+			{ // a/b + c/d = ad/bd + cb/bd = ad + cb /bd
+				cout << copy << "d + cb /bd " << endl;
+				Rational copyR = simply(Rational(r));
+				Integer newDem = copy.denominators * copyR.denominators;
+				Integer newNume = copy.numerator * copyR.denominators;
+				Integer newNumeR = copyR.numerator * copy.denominators;
+				// cout << newNumeR << " " << newNume << endl;
+				copy.numerator = newNume + newNumeR;
+
+				Rational result = simply(Rational(copy.numerator, newDem));
+				if (result.numerator > result.denominators)
+				{
+					result.wholeNum = result.numerator / result.denominators;
+					result.numerator = result.numerator % result.denominators;
+				}
+				value = result.wholeNum.getValue() + "." + result.numerator.getValue() + "/" + result.denominators.getValue();
+			}
+			// case : r = A.a/b
+			else if (r.wholeNum != Integer("0") && r.denominators != Integer("0"))
+			{
+				Rational result;
+				result.wholeNum += wholeNum;
+				result.wholeNum += r.wholeNum;
+				Rational copyR = simply(r);
+			}
 		}
 		// case : Local = A.a/b
 		else if (wholeNum != Integer("0") && denominators != Integer("0"))
