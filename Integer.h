@@ -61,6 +61,7 @@ namespace cosc326
 	bool operator!=(const Integer &lhs, const Integer &rhs); // lhs != rhs
 
 	Integer gcd(const Integer &a, const Integer &b); // i = gcd(a, b);
+	Integer lcm(const Integer &a, const Integer &b);
 }
 
 #endif

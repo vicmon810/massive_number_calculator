@@ -857,4 +857,16 @@ namespace cosc326
 		}
 		return n1;
 	}
+	Integer lcm(const Integer& a, const Integer& b)
+	{
+		Integer gcdValue = cosc326::gcd(a, b); // Use fully qualified name to access gcd function
+
+		// Calculate the LCM using the formula: LCM(a, b) = (a * b) / gcd(a, b)
+		Integer product = a * b;
+		Integer lcmValue = product / gcdValue;
+
+		return lcmValue;
+	}
+
+
 }

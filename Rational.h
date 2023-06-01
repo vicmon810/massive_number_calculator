@@ -31,7 +31,8 @@ namespace cosc326
 		Rational operator-() const; // -r;
 		Rational operator+() const; // +r;
 
-		Rational simply(const Rational &a); // simply  denominator and numerator
+
+		Rational simplify(const Rational &a); // simplify  denominator and numerator
 
 		// Arithmetic assignment operators
 		Rational &operator+=(const Rational &r); // q += r;
@@ -39,15 +40,19 @@ namespace cosc326
 		Rational &operator*=(const Rational &r); // q *= r;
 		Rational &operator/=(const Rational &r); // q /= r;
 
-		// lhs < rhs -- a 'friend' means < isn't a member, but can access the private parts of the class.
-		// You may need to make some other functions friends, but do so sparingly.
 		friend bool operator<(const Rational &lhs, const Rational &rhs);
+		friend Rational operator+(const Rational& lhs, const Rational& rhs); // lhs + rhs
+
+		friend bool operator>(const Rational &lhs, const Rational &rhs);  // lhs > rhs
+		friend bool operator<=(const Rational &lhs, const Rational &rhs); // lhs <= rhs
+		friend bool operator>=(const Rational &lhs, const Rational &rhs); // lhs >= rhs
+		friend bool operator==(const Rational &lhs, const Rational &rhs); // lhs == rhs
+		friend bool operator!=(const Rational &lhs, const Rational &rhs); // lhs != rhs
+
 
 	private:
-		// Can add internal storage or methods here
 		Integer denominators;
 		Integer numerator;
-		Integer wholeNum;
 		string value;
 	};
 
@@ -60,11 +65,7 @@ namespace cosc326
 	std::ostream &operator<<(std::ostream &os, const Rational &i); // std::cout << i << std::endl;
 	std::istream &operator>>(std::istream &is, Rational &i);	   // std::cin >> i;
 
-	bool operator>(const Rational &lhs, const Rational &rhs);  // lhs > rhs
-	bool operator<=(const Rational &lhs, const Rational &rhs); // lhs <= rhs
-	bool operator>=(const Rational &lhs, const Rational &rhs); // lhs >= rhs
-	bool operator==(const Rational &lhs, const Rational &rhs); // lhs == rhs
-	bool operator!=(const Rational &lhs, const Rational &rhs); // lhs != rhs
+	bool operator<(const Rational &lhs, const Rational &rhs);
 
 }
 

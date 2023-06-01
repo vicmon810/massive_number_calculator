@@ -7,297 +7,243 @@
 #include <iomanip>
 
 using namespace std;
-namespace cosc326
-{
+
+namespace cosc326 {
 
 	Rational::Rational()
+    : denominators("1"), numerator("0"), value("0/1")
 	{
-		value = "0";
 	}
 
-	Rational::Rational(const std::string &str)
+	Rational::Rational(const string& str)
+	: denominators("1"), value(str)
 	{
-		value = str;
+		// Find the position of the '/' character
+		size_t slashPos = str.find('/');
+		if (slashPos != string::npos)
+		{
+			// Extract the numerator and denominator substrings
+			string numeratorStr = str.substr(0, slashPos);
+			string denominatorStr = str.substr(slashPos + 1);
+
+			// Assign the parsed values to numerator and denominators
+			numerator = Integer(numeratorStr);
+			denominators = Integer(denominatorStr);
+		}
+		else
+		{
+			// If no '/' character found, assume the input is a whole number
+			numerator = Integer(str);
+		}
 	}
 
-	Rational::Rational(const Rational &r)
+
+	Rational::Rational(const Rational& r)
+		: denominators(r.denominators), numerator(r.numerator), value(r.value)
 	{
-		value = r.value;
 	}
 
-	Rational::Rational(const Integer &a)
-	{ // whole number
-		value = a.getValue();
-	}
-
-	Rational::Rational(const Integer &a, const Integer &b) // 35/40 = 7/8 ; 4/2 = 2
-	{													   // numerator == a; denominators == b
-		numerator = a;
-		denominators = b;
-		if (a == b)
-			value = "1";
-
-		value = a.getValue() + "/" + b.getValue();
-	}
-
-	Rational::Rational(const Integer &a, const Integer &b, const Integer &c)
+	Rational::Rational(const Integer& a)
+		: denominators("1"), numerator(a), value(a.getValue() + "/1")
 	{
-		wholeNum = a;
-		numerator = b;
-		denominators = c;
-		value = a.getValue() + "." + b.getValue() + "/" + c.getValue();
+	}
+
+	Rational::Rational(const Integer& a, const Integer& b)
+		: denominators(b), numerator(a), value(a.getValue() + "/" + b.getValue())
+	{
+	}
+
+	Rational::Rational(const Integer& a, const Integer& b, const Integer& c)
+		: denominators(c), numerator((a * c) + b), value(((a * c) + b).getValue() + "/" + c.getValue())
+	{
 	}
 
 	Rational::~Rational()
 	{
 	}
 
-	Rational Rational::simply(const Rational &a)
-	{
-
-		Integer divider = gcd(a.numerator, a.denominators);
-		Integer new__numerator = a.numerator / divider;
-		Integer new__denominator = a.denominators / divider;
-		Rational result = Rational(new__numerator, new__denominator);
-		// cout << result << endl;
-		return result;
-	}
-
-	// Getter method
-	std::string Rational::getDecValue() const
+	string Rational::getDecValue() const
 	{
 		return value;
 	}
-	// Setter method
-	void Rational::setDecValue(const std::string &str)
+
+	void Rational::setDecValue(const string& str)
 	{
 		value = str;
 	}
 
-	Rational &Rational::operator=(const Rational &r)
+	Rational& Rational::operator=(const Rational& r)
 	{
+		if (this == &r) {
+			return *this;
+		}
+
 		denominators = r.denominators;
 		numerator = r.numerator;
 		value = r.value;
+
 		return *this;
 	}
 
 	Rational Rational::operator-() const
 	{
+		Rational result(*this);
+		result.numerator = -result.numerator;
+		return result;
 	}
 
 	Rational Rational::operator+() const
 	{
-	}
-	/*
-	 *@desc : using Integer operator to help me. spearer whole number and decimal number  and fill with 0 to calculate decimal number
-	 */
-	Rational &Rational::operator+=(const Rational &r)
-	{
-		Integer new_demominators;
-		Rational simply_input;
-		Integer resultNum;
-		if (denominators != r.denominators)
-		{
-			simply_input = Rational(simply(r));
-
-			new_demominators = simply_input.denominators * denominators;
-			Integer new_input_numerator = simply_input.numerator * numerator;
-			numerator *= simply_input.denominators;
-			resultNum = new_input_numerator + numerator;
-		}
-		else
-		{
-			new_demominators = denominators;
-		}
-
-		Rational result = Rational(resultNum, new_demominators);
-		Rational final = simply(result);
-
-		if (final.numerator > final.denominators)
-		{
-			wholeNum += (final.numerator / final.denominators);
-			numerator = final.numerator % final.denominators;
-		}
-		else
-		{
-			wholeNum = final.wholeNum;
-			numerator = final.numerator;
-		}
-		denominators = final.denominators;
-
-		if (wholeNum.getValue() != "0")
-			value = wholeNum.getValue() + "." + numerator.getValue() + "/" + denominators.getValue();
-		else
-			value = numerator.getValue() + "/" + denominators.getValue();
 		return *this;
 	}
 
-	Rational &Rational::operator-=(const Rational &r)
+	Rational Rational::simplify(const Rational& r)
 	{
+		Integer gcdValue = gcd(r.numerator, r.denominators);
+
+		Integer simplifiedNumerator = r.numerator / gcdValue;
+		Integer simplifiedDenominator = r.denominators / gcdValue;
+
+		Rational simplifiedRational(simplifiedNumerator, simplifiedDenominator);
+		return simplifiedRational;
 	}
 
-	Rational &Rational::operator*=(const Rational &r)
+	Rational& Rational::operator+=(const Rational& rhs)
 	{
 
+		if (denominators == rhs.denominators)
+		{
+			numerator += rhs.numerator;
+		}
+		else
+		{
+			Integer commonDenominator = lcm(denominators, rhs.denominators);
+			Integer scaledNum1 = numerator * (commonDenominator / denominators);
+			Integer scaledNum2 = rhs.numerator * (commonDenominator / rhs.denominators);
+			numerator = scaledNum1 + scaledNum2;
+			denominators = commonDenominator;
+		}
+
+		value = numerator.getValue() + "/" + denominators.getValue();
 		return *this;
 	}
 
-	Rational &Rational::operator/=(const Rational &r)
+
+
+
+	Rational& Rational::operator-=(const Rational& r)
 	{
+		Integer commonDenominator = lcm(denominators, r.denominators);
+		Integer scaledNum1 = numerator * (commonDenominator / denominators);
+		Integer scaledNum2 = r.numerator * (commonDenominator / r.denominators);
+		numerator = scaledNum1 - scaledNum2;
+		denominators = commonDenominator;
+		value = numerator.getValue() + "/" + denominators.getValue();
 		return *this;
 	}
 
-	Rational operator+(const Rational &lhs, const Rational &rhs)
+	Rational& Rational::operator*=(const Rational& r)
 	{
-		Rational result = lhs; // Make a copy of lhs
-
-		result += rhs; // Add rhs to the copy
-		return result; // Return the result
+		std::cout << "numerator: " << numerator << std::endl;
+    	std::cout << "denominator: " << denominators << std::endl;
+		std::cout << "numerator: " << r.numerator << std::endl;
+    	std::cout << "denominator: " << r.denominators << std::endl;
+		numerator *= r.numerator;
+		denominators *= r.denominators;
+		value = numerator.getValue() + "/" + denominators.getValue();
+		std::cout << "numerator post: " << numerator << std::endl;
+    	std::cout << "denominator post: " << denominators << std::endl;
+		std::cout << "Result: " << *this << std::endl;
+		return *this;
 	}
 
-	Rational operator-(const Rational &lhs, const Rational &rhs)
+	Rational& Rational::operator/=(const Rational& r)
 	{
-		Rational result = lhs;
+		numerator *= r.denominators;
+		denominators *= r.numerator;
+		*this = simplify(*this); // Simplify the result
+		return *this;
+	}
+
+	bool operator<(const Rational& lhs, const Rational& rhs)
+	{
+		// Comparison logic goes here
+		return lhs.numerator * rhs.denominators < rhs.numerator * lhs.denominators;
+	}
+
+	Rational operator+(const Rational& lhs, const Rational& rhs)
+	{
+		
+
+		Rational result(lhs);  // Create a copy of lhs
+		result += rhs;  // Use the += operator to add rhs to result
+		return result;
+	}
+
+
+	Rational operator-(const Rational& lhs, const Rational& rhs)
+	{
+		Rational result(lhs);
 		result -= rhs;
 		return result;
 	}
 
-	Rational operator*(const Rational &lhs, const Rational &rhs)
+	Rational operator*(const Rational& lhs, const Rational& rhs)
 	{
-		Rational result = lhs;
+		std::cout << "lhs: " << lhs << std::endl;
+    	std::cout << "rhs: " << rhs << std::endl;
+		Rational result(lhs);
 		result *= rhs;
 		return result;
 	}
 
-	Rational operator/(const Rational &lhs, const Rational &rhs)
+	Rational operator/(const Rational& lhs, const Rational& rhs)
 	{
-		return lhs;
+		Rational result(lhs);
+		result /= rhs;
+		return result;
 	}
 
-	std::ostream &operator<<(std::ostream &os, const Rational &i)
+	std::ostream& operator<<(std::ostream& os, const Rational& r)
 	{
-		os << i.getDecValue();
+		os << r.getDecValue();
 		return os;
 	}
-	std::istream &operator>>(std::istream &is, Rational &i)
+
+	std::istream& operator>>(std::istream& is, Rational& r)
 	{
 		std::string input;
 		is >> input;
-		i.setDecValue(input);
+		r.setDecValue(input);
 		return is;
 	}
 
-	bool operator<(const Rational &lhs, const Rational &rhs)
+
+
+	bool operator>(const Rational& lhs, const Rational& rhs)
 	{
-		if (lhs == rhs)
-			return false;
-		string smaller = lhs.getDecValue();
-		string bigger = rhs.getDecValue();
-		if (smaller[0] == '+')
-			smaller = smaller.substr(1);
-		if (bigger[0] == '+')
-			bigger = bigger.substr(1);
-
-		if (smaller[0] == '-' && bigger[0] != '-')
-		{
-			return true;
-		}
-
-		if (smaller[0] != '-' && bigger[0] == '-')
-		{
-			return false;
-		}
-		string dot = ".";
-		size_t smallDot = smaller.find(dot);
-		size_t bigDot = bigger.find(dot);
-		if (smallDot < bigDot)
-			return true;
-
-		if (smallDot > bigDot)
-			return false;
-
-		if (smallDot == bigDot)
-		{
-			int smallDec = smaller.size() - smallDot;
-			int bigDec = bigger.size() - bigDot;
-			if (smallDec > bigDec)
-				return true;
-			if (smallDec < bigDec)
-				return false;
-			if (smallDec == bigDec)
-			{
-				int index = 0;
-				while (index < smaller.size())
-				{
-					if (smaller[index] < bigger[index])
-						return true;
-					index++;
-				}
-			}
-		}
-		return false;
+		return rhs < lhs;
 	}
 
-	bool operator>(const Rational &lhs, const Rational &rhs)
-	{ // reverse < operator
-
-		if (lhs < rhs || lhs == rhs)
-			return false;
-		else
-			return true;
-	}
-
-	bool operator<=(const Rational &lhs, const Rational &rhs)
+	bool operator<=(const Rational& lhs, const Rational& rhs)
 	{
-		if (lhs == rhs || lhs < rhs)
-			return true;
-		else
-			return false;
+		return !(lhs > rhs);
 	}
 
-	bool operator>=(const Rational &lhs, const Rational &rhs)
+	bool operator>=(const Rational& lhs, const Rational& rhs)
 	{
-		if (lhs == rhs || lhs > rhs)
-			return true;
-		else
-			return false;
+		return !(lhs < rhs);
 	}
 
-	bool operator==(const Rational &lhs, const Rational &rhs)
+	bool operator==(const Rational& lhs, const Rational& rhs)
 	{
-		string str1 = lhs.getDecValue();
-		string str2 = rhs.getDecValue();
-		if (str1[0] == '+')
-			str1 = str1.substr(1);
-		if (str2[0] == '+')
-			str2 = str2.substr(1);
-		int str1Len = str1.size(), str2Len = str2.size();
-		if (str1[0] == str2[0] && str1Len == str2Len)
-		{
-			int index = 0;
-			while (index < str1Len)
-			{
-				if (str1[index] == str2[index])
-					index++;
-				else
-					return false;
-			}
-			if (index == str1Len)
-				return true;
-		}
-		else
-		{
-			return false;
-		}
-		return true;
+		// Comparison logic goes here
+		return lhs.numerator == rhs.numerator && lhs.denominators == rhs.denominators;
 	}
 
-	bool operator!=(const Rational &lhs, const Rational &rhs)
+	bool operator!=(const Rational& lhs, const Rational& rhs)
 	{
-		if (lhs == rhs)
-			return false;
-		else
-			return true;
+		return !(lhs == rhs);
 	}
+
 }
