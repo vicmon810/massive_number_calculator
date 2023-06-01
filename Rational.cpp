@@ -197,11 +197,36 @@ namespace cosc326 {
 		return result;
 	}
 
-	std::ostream& operator<<(std::ostream& os, const Rational& r)
-	{
-		os << r.getDecValue();
-		return os;
-	}
+	std::ostream& operator<<(std::ostream& os, const Rational& rational)
+{
+    Integer absNumerator = abs(rational.getNumerator());
+    Integer absDenominator = abs(rational.getDenominator());
+
+    Integer wholePart = absNumerator / absDenominator;
+    Integer remainingNumerator = absNumerator % absDenominator;
+
+    if (rational.getNumerator() < Integer("0"))
+        os << "-";
+
+    if (wholePart != Integer("0"))
+        os << wholePart;
+
+    if (remainingNumerator != Integer("0"))
+    {
+        if (wholePart != Integer("0"))
+            os << " ";
+
+        os << remainingNumerator << "/" << absDenominator;
+    }
+    else if (wholePart == Integer("0"))
+    {
+        // Display zero if the fraction is 0/1
+        os << "0";
+    }
+
+    return os;
+}
+
 
 	std::istream& operator>>(std::istream& is, Rational& r)
 	{
