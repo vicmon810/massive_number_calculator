@@ -79,15 +79,16 @@ int main()
 	// Rational
 	Integer a = Integer("12");
 	Integer b = Integer("12");
-	Integer c = Integer("33");
+	Integer c = Integer("16");
 
-	Rational ab = Rational(a, b);
+	Rational ab = Rational(a);
 	Rational abc = Rational(a, b, c);
 	Rational ac = Rational(a, c);
 	Rational copy = abc;
 
 	// cout << ab << " " << abc << " " << copy << endl;
-	ab += ac;
+	cout << ac << endl;
+	ab += abc;
 	cout << ab << endl;
 	return 0;
 }

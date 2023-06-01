@@ -11,22 +11,47 @@ namespace cosc326
 {
 
 	Rational::Rational()
-	{
+	{ // default all figure is ZERO
+		denominators = Integer();
+		numerator = Integer();
+		wholeNum = Integer();
 		value = "0";
 	}
 
 	Rational::Rational(const std::string &str)
-	{
+	{ // string contain whole number denominators and numerator
+		// will ignore all sign for neow
+		int dot = str.find(".");
+		int slash = str.find("/");
+		if (dot == -1 && slash == -1)
+		{
+			wholeNum = Integer(str);
+		}
+		else if (dot == -1)
+		{
+			numerator = Integer(str.substr(0, slash));
+			denominators = Integer(str.substr(slash + 1));
+		}
+		else
+		{
+			wholeNum = Integer(str.substr(0, dot));
+			numerator = Integer(str.substr(dot + 1, slash - dot - 1));
+			denominators = Integer(str.substr(slash + 1));
+		}
 		value = str;
 	}
 
 	Rational::Rational(const Rational &r)
 	{
+		wholeNum = r.wholeNum;
+		denominators = r.denominators;
+		numerator = r.numerator;
 		value = r.value;
 	}
 
 	Rational::Rational(const Integer &a)
 	{ // whole number
+		wholeNum = a;
 		value = a.getValue();
 	}
 
@@ -54,13 +79,25 @@ namespace cosc326
 
 	Rational Rational::simply(const Rational &a)
 	{
-
-		Integer divider = gcd(a.numerator, a.denominators);
-		Integer new__numerator = a.numerator / divider;
-		Integer new__denominator = a.denominators / divider;
-		Rational result = Rational(new__numerator, new__denominator);
-		// cout << result << endl;
-		return result;
+		if (a.denominators.getValue() == "0")
+		{ // failed statement
+			Rational res = Rational();
+			return res;
+		}
+		else if (a.numerator.getValue() == a.denominators.getValue())
+		{
+			Rational res = Rational("1");
+			return res;
+		}
+		else
+		{
+			Integer divider = gcd(a.numerator, a.denominators);
+			Integer new__numerator = a.numerator / divider;
+			Integer new__denominator = a.denominators / divider;
+			Rational result = Rational(new__numerator, new__denominator);
+			// cout << result << endl;
+			return result;
+		}
 	}
 
 	// Getter method
@@ -94,42 +131,54 @@ namespace cosc326
 	 */
 	Rational &Rational::operator+=(const Rational &r)
 	{
-		Integer new_demominators;
-		Rational simply_input;
-		Integer resultNum;
-		if (denominators != r.denominators)
+		// Case : Local = A
+		if (wholeNum != Integer("0") && denominators == Integer("0"))
 		{
-			simply_input = Rational(simply(r));
+			// case : r = A
+			if (r.wholeNum != Integer("0") && r.denominators == Integer("0"))
+			{
+				cout << "{}" << endl;
+				wholeNum += r.wholeNum;
+				value = wholeNum.getValue();
+			}
+			// Case : r = a/b
+			else if (r.wholeNum == Integer("0") && r.denominators != Integer("0"))
+			{
+				cout << "ds" << endl;
+				Rational simpled = simply(r);
+				wholeNum += simpled.wholeNum;
+				numerator += simpled.numerator;
+				denominators += simpled.denominators;
 
-			new_demominators = simply_input.denominators * denominators;
-			Integer new_input_numerator = simply_input.numerator * numerator;
-			numerator *= simply_input.denominators;
-			resultNum = new_input_numerator + numerator;
+				if (numerator > denominators)
+				{
+					Integer new_numer = numerator % denominators;
+					Integer temp_whole = numerator / denominators;
+					wholeNum += temp_whole;
+					numerator = new_numer;
+				}
+				value = wholeNum.getValue() + "." + numerator.getValue() + "/" + denominators.getValue();
+			}
+			// Case :: r = A.a/b
+			else if (r.wholeNum != Integer("0") && r.denominators != Integer("0"))
+			{
+				cout << "A.a/b" << endl;
+				wholeNum += r.wholeNum;
+				cout << wholeNum << endl;
+				Rational simpled = simply(r);
+				cout << simpled.wholeNum << endl;
+			}
 		}
-		else
+		// Case : local = a/b
+		else if (wholeNum == Integer("0") && denominators != Integer("0"))
 		{
-			new_demominators = denominators;
+			cout << "CCC" << endl;
 		}
-
-		Rational result = Rational(resultNum, new_demominators);
-		Rational final = simply(result);
-
-		if (final.numerator > final.denominators)
+		// case : Local = A.a/b
+		else if (wholeNum != Integer("0") && denominators != Integer("0"))
 		{
-			wholeNum += (final.numerator / final.denominators);
-			numerator = final.numerator % final.denominators;
+			cout << "PPP" << endl;
 		}
-		else
-		{
-			wholeNum = final.wholeNum;
-			numerator = final.numerator;
-		}
-		denominators = final.denominators;
-
-		if (wholeNum.getValue() != "0")
-			value = wholeNum.getValue() + "." + numerator.getValue() + "/" + denominators.getValue();
-		else
-			value = numerator.getValue() + "/" + denominators.getValue();
 		return *this;
 	}
 
