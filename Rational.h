@@ -22,6 +22,9 @@ namespace cosc326
 		Rational(const Integer &a, const Integer &b);					// a/b
 		Rational(const Integer &a, const Integer &b, const Integer &c); // a + b/c
 
+		Integer getNumerator() const { return numerator; }
+    	Integer getDenominator() const { return denominators; }
+
 		~Rational();
 		std::string getDecValue() const;
 		void setDecValue(const std::string &str);

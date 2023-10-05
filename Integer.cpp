@@ -6,42 +6,58 @@
 using namespace std;
 namespace cosc326
 {
-	/*default Constructor*/
+	/*
+	 * @brief Constructs an Integer object with a default value of 0.
+	 */
 	Integer::Integer()
 	{
 		// cout << "here" << endl;
 		value = "0";
 	}
-	/*passing int convert to String*/
+	/*
+	 * @brief Constructs an Integer object from another Integer object.
+	 * @param i The Integer object to be copied.
+	 */
 	Integer::Integer(const Integer &i)
 	{
 		value = i.value;
 	}
-	/*1st class citizen */
+	/*
+	 * @brief Constructs an Integer object from a string representation of a number.
+	 * @param s The string representing the number.
+	 */
 	Integer::Integer(const std::string &s)
 	{
 		value = s;
-		// std::cout << value << std::endl;
 	}
-
+	/*
+	 * @brief Destructor for the Integer class.
+	 *        (No specific clean-up is performed in this implementation.)
+	 */
 	Integer::~Integer()
 	{
 	}
-	// getter method
+	/*
+	 * @brief Getter method to retrieve the value of the Integer object.
+	 * @return The value of the Integer as a string.
+	 */
 	std::string Integer ::getValue() const
 	{
 		return value;
 	}
-	// setter method
+	/*
+	 * @brief Setter method to set the value of the Integer object.
+	 * @param s The new value to set, provided as a string.
+	 */
 	void Integer ::setValue(std::string &s)
 	{
 		value = s;
 	}
 	/*
-	 *@desc: return absolute value of input
-	 *@param a: value needs to be return its abs
+	 * @brief Returns the absolute value of the input.
+	 * @param a The value for which the absolute value needs to be returned.
+	 * @return The absolute value of the input.
 	 */
-	/* Return absolute value of input */
 	Integer abs(const Integer &a)
 	{
 		std::string str = a.getValue();
@@ -52,16 +68,19 @@ namespace cosc326
 		return Integer(str);
 	}
 
-	/*@Desc: overwrite local value by incoming value Integer i
-	 *@param i : incoming Integer
-	 *@return : local Integer value
+	/*
+	 * @brief Overwrites the local Integer value with the incoming Integer value.
+	 * @param i The incoming Integer value.
+	 * @return A reference to the updated local Integer value.
 	 */
 	Integer &Integer::operator=(const Integer &i)
 	{
 		value = i.getValue();
 		return *this;
 	}
-	/*@Desc: assign negative sign in the number if the number is negative already make it positive
+	/*
+	 * @brief Assigns a negative sign to the number if it is positive, and makes it positive if it is negative.
+	 * @return The modified Integer object with the updated sign.
 	 */
 	Integer Integer::operator-()
 	{
@@ -76,8 +95,9 @@ namespace cosc326
 		return *this;
 	}
 
-	/*@Desc: increase local value by 1
-	 *@return: local value +1;
+	/*
+	 * @brief Assigns a positive sign to the number.
+	 * @return The Integer object with the positive sign assigned.
 	 */
 	Integer Integer::operator+()
 	{
@@ -85,126 +105,114 @@ namespace cosc326
 			value.erase(0, 1);
 		return *this;
 	}
-	/*@desc: accumulate local value by input i
-	 *@param:
+	/*
+	 * @brief Accumulates the local value by the input value.
+	 * @param i The value by which the local value will be increased.
+	 * @return A reference to the updated local value.
 	 */
 	Integer &Integer::operator+=(const Integer &i)
 	{
-
 		std::string input = i.value;
-		std::string &local = value;
-
-		bool negateResult = false;
-		bool negateInput = false;
-
-		if (input[0] == '-')
-		{
-			input = input.substr(1);
-			negateInput = true;
+		std::string firstInput = input.substr(0, 1);
+		std::string firstLocal = value.substr(0, 1);
+		if (firstInput.compare("-") == 0 && firstLocal.compare("+") == 0)
+		{ //+x + -y == x - y
+			Integer x = Integer(value.substr(1));
+			Integer y = Integer(input.substr(1));
+			x -= y;
+			value = x.getValue();
 		}
-
-		if (local[0] == '-')
-		{
-			local = local.substr(1);
-			negateResult = true;
+		else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
+		{ //-x + +y =  y - x
+			Integer x = Integer(value.substr(1));
+			Integer y = Integer(input.substr(1));
+			y -= x;
+			value = y.getValue();
 		}
+		else if (firstInput.compare("+") == 0 && firstLocal.compare("+") == 0)
+		{ // +x + +y = x + y;
+			Integer x = Integer(value.substr(1));
+			Integer y = Integer(input.substr(1));
+			x += y;
+			value = x.getValue();
+		}
+		else if (firstInput.compare("-") == 0 && firstLocal.compare("-") == 0)
+		{ // -x + -y = -(x + y)
+			Integer x = Integer(value.substr(1));
+			Integer y = Integer(input.substr(1));
+			x += y;
+			value = "-" + x.getValue();
+		}
+		else if (firstInput.compare("-") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
+		{ // x + -y = x - y
+			Integer x = Integer(value);
+			Integer y = Integer(input.substr(1));
+			x -= y;
+			value = x.getValue();
+		}
+		else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
+		{ // x + +y = x + y
+			Integer x = Integer(value);
+			Integer y = Integer(input.substr(1));
+			x += y;
+			value = x.getValue();
+		}
+		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
+		{ //-x + y = y - x
+			Integer x = Integer(value.substr(1));
+			Integer y = Integer(input);
+			y -= x;
+			value = y.getValue();
+		}
+		else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
+		{ // + x + y = x + y
+			Integer x = Integer(value.substr(1));
+			Integer y = Integer(input);
+			x += y;
+			value = x.getValue();
+		}
+		else
+		{
+			// Handle non-sign input
+			int inputLen = input.length();
+			int localLen = value.length();
+			int min = std::min(inputLen, localLen);
+			int max = std::max(inputLen, localLen);
 
-		if (input[0] == '+')
-
-			if (firstInput.compare("-") == 0 && firstLocal.compare("+") == 0)
-			{ //+x + -y == x - y
-				Integer x = Integer(value.substr(1));
-				Integer y = Integer(input.substr(1));
-				x -= y;
-				value = x.getValue();
-			}
-			else if (firstInput.compare("+") == 0 && firstLocal.compare("-") == 0)
-			{ //-x + +y =  y - x
-				Integer x = Integer(value.substr(1));
-				Integer y = Integer(input.substr(1));
-				y -= x;
-				value = y.getValue();
-			}
-			else if (firstInput.compare("+") == 0 && firstLocal.compare("+") == 0)
-			{ // +x + +y = x + y;
-				Integer x = Integer(value.substr(1));
-				Integer y = Integer(input.substr(1));
-				x += y;
-				value = x.getValue();
-			}
-			else if (firstInput.compare("-") == 0 && firstLocal.compare("-") == 0)
-			{ // -x + -y = -(x + y)
-				Integer x = Integer(value.substr(1));
-				Integer y = Integer(input.substr(1));
-				x += y;
-				value = "-" + x.getValue();
-			}
-			else if (firstInput.compare("-") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-			{ // x + -y = x - y
-				Integer x = Integer(value);
-				Integer y = Integer(input.substr(1));
-				x -= y;
-				value = x.getValue();
-			}
-			else if (firstInput.compare("+") == 0 && (firstLocal.compare("-") != 0 && firstLocal.compare("+") != 0))
-			{ // x + +y = x + y
-				Integer x = Integer(value);
-				Integer y = Integer(input.substr(1));
-				x += y;
-				value = x.getValue();
-			}
-			else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("-") == 0)
-			{ //-x + y = y - x
-				Integer x = Integer(value.substr(1));
-				Integer y = Integer(input);
-				y -= x;
-				value = y.getValue();
-			}
-			else if ((firstInput.compare("-") != 0 && firstInput.compare("+") != 0) && firstLocal.compare("+") == 0)
-			{ // + x + y = x + y
-				Integer x = Integer(value.substr(1));
-				Integer y = Integer(input);
-				x += y;
-				value = x.getValue();
-			}
-			else
+			if (inputLen > localLen)
 			{
-				// Handle non-sign input
-				int inputLen = input.length();
-				int localLen = value.length();
-				int min = std::min(inputLen, localLen);
-				int max = std::max(inputLen, localLen);
-
-				if (inputLen > localLen)
-				{
-					swap(input, value);
-				}
-				std::string sum = "";
-				int digitDiff = max - min;
-				int carry = 0;
-				int intSum;
-				for (int i = min - 1; i >= 0; i--)
-				{
-					intSum = (input[i] - '0') + (value[i + digitDiff] - '0') + carry;
-					sum.push_back(intSum % 10 + '0');
-					carry = intSum / 10;
-				}
-				for (int i = digitDiff - 1; i >= 0; i--)
-				{
-					intSum = (value[i] - '0') + carry;
-					sum.push_back(intSum % 10 + '0');
-					carry = intSum / 10;
-				}
-				if (carry)
-				{
-					sum.push_back(carry + '0');
-				}
-				reverse(sum.begin(), sum.end());
-				value = sum;
+				swap(input, value);
 			}
+			std::string sum = "";
+			int digitDiff = max - min;
+			int carry = 0;
+			int intSum;
+			for (int i = min - 1; i >= 0; i--)
+			{
+				intSum = (input[i] - '0') + (value[i + digitDiff] - '0') + carry;
+				sum.push_back(intSum % 10 + '0');
+				carry = intSum / 10;
+			}
+			for (int i = digitDiff - 1; i >= 0; i--)
+			{
+				intSum = (value[i] - '0') + carry;
+				sum.push_back(intSum % 10 + '0');
+				carry = intSum / 10;
+			}
+			if (carry)
+			{
+				sum.push_back(carry + '0');
+			}
+			reverse(sum.begin(), sum.end());
+			value = sum;
+		}
 		return *this;
 	}
-
+	/*
+	 * @brief De-accumulates the local value by the input value.
+	 * @param i The value to subtract from the local value.
+	 * @return A reference to the updated local value.
+	 */
 	Integer &Integer::operator-=(const Integer &i)
 	{
 		std::string input = i.getValue();
@@ -230,13 +238,12 @@ namespace cosc326
 		{ // +x - +y = x - y;
 			Integer x = Integer(value.substr(1));
 			Integer y = Integer(input.substr(1));
-			cout << "cou2312t " << endl;
 			x -= y;
 			value = x.getValue();
 		}
 		else if (firstInput == "-" && firstLocal == "-")
 		{ // -x - -y =  - x + y
-			cout << "cout111 " << endl;
+
 			Integer x = Integer(value.substr(1));
 			Integer y = Integer(input.substr(1));
 			x += y;
@@ -244,7 +251,7 @@ namespace cosc326
 		}
 		else if (firstInput == "-")
 		{ // x - -y ==  x + y
-			cout << "cout " << endl;
+
 			Integer x = Integer(value);
 			Integer y = Integer(input.substr(1));
 			x += y;
@@ -336,7 +343,11 @@ namespace cosc326
 		return *this;
 	}
 
-	/*mutiple local value by input i*/
+	/*
+	 * @brief Multiplies the local value by the input value.
+	 * @param i The value to multiply the local value by.
+	 * @return A reference to the updated local value.
+	 */
 	Integer &Integer::operator*=(const Integer &i)
 	{
 		std::string input = i.value;
@@ -437,17 +448,18 @@ namespace cosc326
 		return *this;
 	}
 
-	/*divide local value by input i
-	 * currently it can only have the whole number part;
+	/*
+	 * @brief Divides the local value by the input value.
+	 * @param i The value to divide the local value by.
+	 * @return A reference to the updated local value.
 	 */
 	Integer &Integer::operator/=(const Integer &i)
 	{
 		Integer f = Integer(value);
 		if (f == i)
 		{
-			cout << "here" << value << endl;
+			// cout << "here" << value << endl;
 			value = "1";
-			cout << value << endl;
 			return *this;
 		}
 		Integer p = abs(f);
@@ -539,7 +551,11 @@ namespace cosc326
 		}
 		return *this;
 	}
-	/*remain local value by input i */
+	/*
+	 * @brief Calculates the remainder of the local value divided by the input value.
+	 * @param i The value to divide the local value by and calculate the remainder.
+	 * @return A reference to the updated local value.
+	 */
 	Integer &Integer::operator%=(const Integer &i)
 	{
 		Integer f = Integer(value);
@@ -610,10 +626,6 @@ namespace cosc326
 		}
 		else
 		{
-			// a/b = r
-			// r *b >= a
-			//  r = {0 ......a}
-			// shortest way to find r will be quickest solution
 			int index = 0;
 			Integer zero = Integer("0");
 			Integer remainder;
@@ -631,48 +643,83 @@ namespace cosc326
 		return *this;
 	}
 
-	/*return sum ot lhs and rhs return it as a Integer*/
+	/*
+	 * @brief Returns the sum of the left-hand side (lhs) and right-hand side (rhs) as an Integer.
+	 * @param lhs The left-hand side value (A).
+	 * @param rhs The right-hand side value (B).
+	 * @return The sum of A + B as an Integer.
+	 */
 	Integer operator+(const Integer &lhs, const Integer &rhs)
 	{
 		Integer result = Integer(lhs);
 		result += rhs;
 		return result;
 	}
-
+	/*
+	 * @brief Returns the difference between the left-hand side (lhs) and right-hand side (rhs) as an Integer.
+	 * @param lhs The left-hand side value (A).
+	 * @param rhs The right-hand side value (B).
+	 * @return The difference A - B as an Integer.
+	 */
 	Integer operator-(const Integer &lhs, const Integer &rhs)
 	{
 		Integer result = Integer(lhs);
 		result -= rhs;
 		return result;
 	}
-
+	/*
+	 * @brief Returns the product of the left-hand side (lhs) and right-hand side (rhs) as an Integer.
+	 * @param lhs The left-hand side value (A).
+	 * @param rhs The right-hand side value (B).
+	 * @return The product A * B as an Integer.
+	 */
 	Integer operator*(const Integer &lhs, const Integer &rhs)
 	{
 		Integer result = Integer(lhs);
 		result *= rhs;
 		return result;
 	}
-
+	/*
+	 * @brief Returns the quotient of the left-hand side (lhs) divided by the right-hand side (rhs) as an Integer.
+	 * @param lhs The dividend value (A).
+	 * @param rhs The divisor value (B).
+	 * @return The quotient A / B as an Integer.
+	 */
 	Integer operator/(const Integer &lhs, const Integer &rhs)
 	{
 		Integer result = Integer(lhs);
 		result /= rhs;
 		return result;
 	}
-
+	/*
+	 * @brief Returns the remainder of the left-hand side (lhs) divided by the right-hand side (rhs) as an Integer.
+	 * @param lhs The dividend value (A).
+	 * @param rhs The divisor value (B).
+	 * @return The remainder of A divided by B as an Integer.
+	 */
 	Integer operator%(const Integer &lhs, const Integer &rhs)
 	{
 		Integer Result = Integer(lhs);
 		Result %= rhs;
 		return Result;
 	}
-	// system out
+	/*
+	 * @brief Overloads the stream insertion operator (<<) to generate an output string for the cout stream.
+	 * @param os The output stream object.
+	 * @param i The Integer object to be inserted into the output stream.
+	 * @return The modified output stream object.
+	 */
 	std::ostream &operator<<(std::ostream &os, const Integer &i)
 	{
 		os << i.getValue();
 		return os;
 	}
-	// system in, pass input to the local
+	/*
+	 * @brief Overloads the stream extraction operator (>>) to assign the input string to the Integer object.
+	 * @param is The input stream object.
+	 * @param i The Integer object to which the input string will be assigned.
+	 * @return The modified input stream object.
+	 */
 	std::istream &operator>>(std::istream &is, Integer &i)
 	{
 		std::string input;
@@ -680,7 +727,12 @@ namespace cosc326
 		i.setValue(input);
 		return is;
 	}
-
+	/*
+	 * @brief Compares the values of two Integer objects and returns true if the left-hand side (lhs) is greater than the right-hand side (rhs), false otherwise.
+	 * @param lhs The left-hand side Integer object.
+	 * @param rhs The right-hand side Integer object.
+	 * @return True if lhs is greater than rhs, false otherwise.
+	 */
 	bool operator>(const Integer &lhs, const Integer &rhs)
 	{
 		std::string smaller = lhs.getValue();
@@ -742,12 +794,22 @@ namespace cosc326
 		// The numbers are equal
 		return false;
 	}
-
+	/*
+	 * @brief Compares the values of two Integer objects and returns true if the left-hand side (lhs) is less than the right-hand side (rhs), false otherwise.
+	 * @param lhs The left-hand side Integer object.
+	 * @param rhs The right-hand side Integer object.
+	 * @return True if lhs is less than rhs, false otherwise.
+	 */
 	bool operator<(const Integer &lhs, const Integer &rhs)
 	{
 		return rhs > lhs;
 	}
-
+	/*
+	 * @brief Compares the values of two Integer objects and returns true if the left-hand side (lhs) is smaller than or equal to the right-hand side (rhs), false otherwise.
+	 * @param lhs The left-hand side Integer object.
+	 * @param rhs The right-hand side Integer object.
+	 * @return True if lhs is greater than or equal to rhs, false otherwise.
+	 */
 	bool operator<=(const Integer &lhs, const Integer &rhs)
 	{
 		string str1 = lhs.getValue();
@@ -809,7 +871,12 @@ namespace cosc326
 		// The numbers are equal
 		return true;
 	}
-
+	/*
+	 * @brief Compares the values of two Integer objects and returns true if the left-hand side (lhs) is greater than or equal to the right-hand side (rhs), false otherwise.
+	 * @param lhs The left-hand side Integer object.
+	 * @param rhs The right-hand side Integer object.
+	 * @return True if lhs is greater than or equal to rhs, false otherwise.
+	 */
 	bool operator>=(const Integer &lhs, const Integer &rhs)
 	{
 		if (lhs == rhs || lhs > rhs)
@@ -817,7 +884,12 @@ namespace cosc326
 		else
 			return false;
 	}
-
+	/*
+	 * @brief Compares the values of two Integer objects and returns true if they are equal, false otherwise.
+	 * @param lhs The left-hand side Integer object.
+	 * @param rhs The right-hand side Integer object.
+	 * @return True if lhs is equal to rhs, false otherwise.
+	 */
 	bool operator==(const Integer &lhs, const Integer &rhs)
 	{
 		string str1 = lhs.getValue();
@@ -849,7 +921,12 @@ namespace cosc326
 			return false;
 		}
 	}
-
+	/*
+	 * @brief Compares the values of two Integer objects and returns true if they are not equal, false otherwise.
+	 * @param lhs The left-hand side Integer object.
+	 * @param rhs The right-hand side Integer object.
+	 * @return True if lhs is not equal to rhs, false otherwise.
+	 */
 	bool operator!=(const Integer &lhs, const Integer &rhs)
 	{
 		if (lhs == rhs)
@@ -857,6 +934,12 @@ namespace cosc326
 		else
 			return true;
 	}
+	/*
+	 * @brief Calculates the greatest common divisor (GCD) of two Integer objects.
+	 * @param a The first Integer object.
+	 * @param b The second Integer object.
+	 * @return The greatest common divisor of a and b.
+	 */
 	Integer gcd(const Integer &a, const Integer &b)
 	{
 		Integer n1 = abs(a);
@@ -875,4 +958,21 @@ namespace cosc326
 		}
 		return n1;
 	}
+	/*
+	 * @brief Calculates the least common multiple (LCM) of two Integer objects.
+	 * @param a The first Integer object.
+	 * @param b The second Integer object.
+	 * @return The least common multiple of a and b.
+	 */
+	Integer lcm(const Integer &a, const Integer &b)
+	{
+		Integer gcdValue = cosc326::gcd(a, b); // Use fully qualified name to access gcd function
+
+		// Calculate the LCM using the formula: LCM(a, b) = (a * b) / gcd(a, b)
+		Integer product = a * b;
+		Integer lcmValue = product / gcdValue;
+
+		return lcmValue;
+	}
+
 }
