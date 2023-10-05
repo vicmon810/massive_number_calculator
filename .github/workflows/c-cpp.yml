@@ -2,20 +2,29 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: build and run 
-      run : |
-            mkdir build
-            cd build 
-            cmake ..
-            make
-            ./RationalThinking
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Update Package Repositories
+        run: sudo apt-get update
+
+      - name: Set up CMake and Build Essentials
+        run: |
+          sudo apt-get install -y cmake build-essential
+
+      - name: Build and Run
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          ./RationalThinking
