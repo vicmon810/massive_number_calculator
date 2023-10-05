@@ -21,10 +21,10 @@ jobs:
         run: |
           sudo apt-get install -y cmake build-essential
 
-      - name: Build and Run
+      - name: Build and test
         run: |
           mkdir build
           cd build
           cmake ..
           make
-          ./RationalThinking
+          ./RationalThinking_test
