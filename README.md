@@ -1,4 +1,4 @@
-# Rational Thinking:
+## Rational Thinking:
 In this project, we will be developing a wheel that was conceptualized by several individuals nearly 30 years ago. The program consists of two main components: Integer and Rational. The Integer component is designed for performing calculations with whole numbers, which can have an infinite length similar to Java's BigInteger class. On the other hand, the Rational component handles calculations involving decimal numbers, allowing for potentially infinite precision, much like Java's BigDecimal class.
 
 Our objective is to reimplement and refine the original concept, taking advantage of modern technologies and advancements in the field. By doing so, we aim to create a robust and efficient solution that meets the needs of various applications requiring extensive numerical calculations.
